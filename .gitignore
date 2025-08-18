@@ -7,3 +7,6 @@ mobile/.packages
 frontend-admin/node_modules/
 .env
 .env.local
+# Backend test artifacts
+backend/uploads/
+backend/logs/

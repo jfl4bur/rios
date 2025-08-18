@@ -1,0 +1,31 @@
+En C:\Users\jflabur\Desktop\rios\backend\scripts\register_cleanup_task.ps1: 15 Carácter: 11
++ $cmd = "\"$batPath\""
++           ~~~~~~~~~~~
+Token '$batPath\""' inesperado en la expresión o la instrucción.
+En C:\Users\jflabur\Desktop\rios\backend\scripts\register_cleanup_task.ps1: 15 Carácter: 19
++ $cmd = "\"$batPath\""
++                   ~~~
+Token '\""' inesperado en la expresión o la instrucción.
+En C:\Users\jflabur\Desktop\rios\backend\scripts\register_cleanup_task.ps1: 27 Carácter: 56
++ ... edule /TN \"$TaskName\" /TR \"$cmd\" /ST $Time /RL HIGHEST /F /RU SYS ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Token '$TaskName\" /TR \"$cmd\" /ST $Time /RL HIGHEST /F /RU SYSTEM"' inesperado en la expresión o la 
+instrucción.
+En C:\Users\jflabur\Desktop\rios\backend\scripts\register_cleanup_task.ps1: 27 Carácter: 65
++ ... e /TN \"$TaskName\" /TR \"$cmd\" /ST $Time /RL HIGHEST /F /RU SYSTEM"
++                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Token '\" /TR \"$cmd\" /ST $Time /RL HIGHEST /F /RU SYSTEM"' inesperado en la expresión o la 
+instrucción.
+En C:\Users\jflabur\Desktop\rios\backend\scripts\register_cleanup_task.ps1: 40 Carácter: 57
++ ... edule /TN \"$TaskName\" /TR \"$cmd\" /ST $Time /RL HIGHEST /F /RU $us ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Token '$TaskName\" /TR \"$cmd\" /ST $Time /RL HIGHEST /F /RU $user"' inesperado en la expresión o la 
+instrucción.
+En C:\Users\jflabur\Desktop\rios\backend\scripts\register_cleanup_task.ps1: 40 Carácter: 66
++ ... le /TN \"$TaskName\" /TR \"$cmd\" /ST $Time /RL HIGHEST /F /RU $user"
++                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Token '\" /TR \"$cmd\" /ST $Time /RL HIGHEST /F /RU $user"' inesperado en la expresión o la 
+instrucción.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnexpectedToken
+ 

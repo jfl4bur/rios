@@ -1,0 +1,57 @@
+{
+  "timestamp": "2025-08-17T10:41:42.091Z",
+  "dryRun": true,
+  "candidates": [
+    {
+      "name": "thumb-thumb-1755380372246-sample.jpg",
+      "mtime": "2025-08-17T06:48:06.568Z",
+      "size": 807
+    },
+    {
+      "name": "thumb-thumb-1755384159059-sample.jpg",
+      "mtime": "2025-08-17T06:48:06.598Z",
+      "size": 807
+    },
+    {
+      "name": "thumb-thumb-1755410166363-sample.jpg",
+      "mtime": "2025-08-17T06:48:06.651Z",
+      "size": 807
+    },
+    {
+      "name": "thumb-thumb-1755410313505-sample.jpg",
+      "mtime": "2025-08-17T06:48:06.691Z",
+      "size": 807
+    },
+    {
+      "name": "thumb-thumb-1755410521380-sample.jpg",
+      "mtime": "2025-08-17T06:48:06.713Z",
+      "size": 807
+    },
+    {
+      "name": "thumb-thumb-1755410618761-sample.jpg",
+      "mtime": "2025-08-17T06:48:06.740Z",
+      "size": 807
+    },
+    {
+      "name": "thumb-thumb-1755410682505-sample.jpg",
+      "mtime": "2025-08-17T06:48:06.792Z",
+      "size": 807
+    },
+    {
+      "name": "thumb-thumb-1755411401535-sample.jpg",
+      "mtime": "2025-08-17T06:48:06.828Z",
+      "size": 807
+    },
+    {
+      "name": "thumb-thumb-1755411669266-sample.jpg",
+      "mtime": "2025-08-17T06:48:06.863Z",
+      "size": 807
+    },
+    {
+      "name": "thumb-thumb-1755413200148-sample.jpg",
+      "mtime": "2025-08-17T06:48:06.882Z",
+      "size": 807
+    }
+  ],
+  "removed": []
+}

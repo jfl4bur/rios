@@ -1,0 +1,22 @@
+name: rios_mobile
+description: Aplicación Flutter básica para Rutas y Ríos
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^0.13.5
+  geolocator: ^9.0.2
+  image_picker: ^0.8.6
+  google_maps_flutter: ^2.2.0
+  flutter_localizations:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/

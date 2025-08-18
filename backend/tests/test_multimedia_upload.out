@@ -1,0 +1,15 @@
+Upload response: {
+  "files": [
+    {
+      "filename": "1755414952616-5a853e37-413a-4eae-8a29-f0766e6b46d6.png",
+      "path": "/uploads/1755414952616-5a853e37-413a-4eae-8a29-f0766e6b46d6.png",
+      "size": 103,
+      "originalMime": "image/png",
+      "detectedMime": "image/png",
+      "detectedExt": ".png",
+      "compressed": true,
+      "thumbnail": "/uploads/thumb-1755414952616-5a853e37-413a-4eae-8a29-f0766e6b46d6.jpg",
+      "thumbnailSize": 807
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "env": "development",
+  "server": {
+    "port": 9000
+  },
+  "firebase": {
+    "projectId": "YOUR_FIREBASE_PROJECT_ID",
+    "clientEmail": "YOUR_FIREBASE_CLIENT_EMAIL",
+    "privateKey": "-----BEGIN PRIVATE KEY-----\\n...\\n-----END PRIVATE KEY-----"
+  },
+  "maps": {
+    "provider": "mapbox",
+    "mapboxKey": "YOUR_MAPBOX_KEY",
+    "googleMapsKey": "YOUR_GOOGLE_MAPS_KEY"
+  },
+  "limits": {
+    "maxFileSizeBytes": 25000000
+  }
+}

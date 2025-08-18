@@ -1,0 +1,16 @@
+{
+  "name": "rios-monorepo",
+  "private": true,
+  "workspaces": ["backend","frontend-admin"],
+  "scripts": {
+    "start:backend": "npm --prefix backend run dev",
+    "start:frontend": "npm --prefix frontend-admin run dev",
+    "start": "concurrently \"npm: start:backend\" \"npm: start:frontend\"",
+  "dev:start": "pwsh -NoProfile -File ./dev_start.ps1",
+  "integration:check": "node ./integration_check.js",
+    "install:all": "npm --prefix backend install && npm --prefix frontend-admin install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}

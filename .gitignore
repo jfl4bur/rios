@@ -1,0 +1,9 @@
+node_modules/
+.DS_Store
+*.log
+backend/data.sqlite
+mobile/.dart_tool/
+mobile/.packages
+frontend-admin/node_modules/
+.env
+.env.local

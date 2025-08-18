@@ -1,0 +1,22 @@
+Found 44 files in uploads
+Failed for 1755380172255-sample.jpg Input file has corrupt header: VipsJpeg: Bogus DQT index 10
+Failed for 1755380174011-sample.jpg Input file has corrupt header: VipsJpeg: Bogus DQT index 10
+Failed for 1755380227644-sample.jpg Input file has corrupt header: VipsJpeg: Bogus DQT index 10
+Failed for 1755380234688-sample.jpg Input file has corrupt header: VipsJpeg: Bogus DQT index 10
+Thumb exists, skipping: thumb-1755380372246-sample.jpg
+Thumb exists, skipping: thumb-1755384159059-sample.jpg
+Thumb exists, skipping: thumb-1755410166363-sample.jpg
+Thumb exists, skipping: thumb-1755410313505-sample.jpg
+Thumb exists, skipping: thumb-1755410521380-sample.jpg
+Thumb exists, skipping: thumb-1755410618761-sample.jpg
+Thumb exists, skipping: thumb-1755410682505-sample.jpg
+Thumb exists, skipping: thumb-1755411401535-sample.jpg
+Thumb exists, skipping: thumb-1755411669266-sample.jpg
+Thumb exists, skipping: thumb-1755413200148-sample.jpg
+Failed for 1755380244727-sample.jpg Input file has corrupt header: VipsJpeg: Bogus DQT index 10
+Thumb exists, skipping: thumb-1755413273019-sample.jpg
+Created thumb for 1755413684837-sample.png -> thumb-1755413684837-sample.jpg size 807
+Thumb exists, skipping: thumb-1755414843349-c07a6137-0a60-4901-ab36-844c5520971f.jpg
+Thumb exists, skipping: thumb-1755414947055-6f6c512e-3f49-48a0-adbc-0fcaa42648b0.jpg
+Thumb exists, skipping: thumb-1755414952616-5a853e37-413a-4eae-8a29-f0766e6b46d6.jpg
+Done

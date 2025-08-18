@@ -1,0 +1,103 @@
+=== Running test_smtp_send.js ===
+Intentando conectar a SMTP: smtp.gmail.com port: 587 secure: false
+[2025-08-17 12:02:14] DEBUG Creating transport: nodemailer (6.10.1; +https://nodemailer.com/; SMTP/6.10.1[client:6.10.1])
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] Resolved smtp.gmail.com as 142.251.173.108 [cache miss]
+[2025-08-17 12:02:14] INFO  [hsfxoZLR354] Connection established to 142.251.173.108:587
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-45a1c6bd172sm136123085e9.6 - gsmtp
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] C: EHLO [127.0.0.1]
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 250-smtp.gmail.com at your service, [77.229.220.61]
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 250-SIZE 35882577
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 250-8BITMIME
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 250-STARTTLS
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 250-ENHANCEDSTATUSCODES
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 250-PIPELINING
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 250-CHUNKING
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 250 SMTPUTF8
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] C: STARTTLS
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 220 2.0.0 Ready to start TLS
+[2025-08-17 12:02:14] INFO  [hsfxoZLR354] Connection upgraded with STARTTLS
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] C: EHLO [127.0.0.1]
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 250-smtp.gmail.com at your service, [77.229.220.61]
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 250-SIZE 35882577
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 250-8BITMIME
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 250-ENHANCEDSTATUSCODES
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 250-PIPELINING
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 250-CHUNKING
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 250 SMTPUTF8
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] SMTP handshake finished
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] C: AUTH PLAIN AGpmbGFidXJAZ21haWwuY29tAC8qIHNlY3JldCAqLw==
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 235 2.7.0 Accepted
+[2025-08-17 12:02:14] INFO  [hsfxoZLR354] User "jflabur@gmail.com" authenticated
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] C: QUIT
+Verificaci├│n SMTP OK. Enviando correo de prueba a jflabur@gmail.com
+[2025-08-17 12:02:14] DEBUG Sending mail using SMTP/6.10.1[client:6.10.1]
+[2025-08-17 12:02:14] DEBUG [qnjMxwXWcWs] Resolved smtp.gmail.com as 142.251.173.108 [cache hit]
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] S: 221 2.0.0 closing connection 5b1f17b1804b1-45a1c6bd172sm136123085e9.6 - gsmtp
+[2025-08-17 12:02:14] DEBUG [hsfxoZLR354] Closing connection to the server using "end"
+[2025-08-17 12:02:14] INFO  [hsfxoZLR354] Connection closed
+[2025-08-17 12:02:14] INFO  [qnjMxwXWcWs] Connection established to 142.251.173.108:587
+[2025-08-17 12:02:14] DEBUG [qnjMxwXWcWs] S: 220 smtp.gmail.com ESMTP ffacd0b85a97d-3bb7f02578dsm9338018f8f.62 - gsmtp
+[2025-08-17 12:02:14] DEBUG [qnjMxwXWcWs] C: EHLO [127.0.0.1]
+[2025-08-17 12:02:14] DEBUG [qnjMxwXWcWs] S: 250-smtp.gmail.com at your service, [77.229.220.61]
+[2025-08-17 12:02:14] DEBUG [qnjMxwXWcWs] S: 250-SIZE 35882577
+[2025-08-17 12:02:14] DEBUG [qnjMxwXWcWs] S: 250-8BITMIME
+[2025-08-17 12:02:14] DEBUG [qnjMxwXWcWs] S: 250-STARTTLS
+[2025-08-17 12:02:14] DEBUG [qnjMxwXWcWs] S: 250-ENHANCEDSTATUSCODES
+[2025-08-17 12:02:14] DEBUG [qnjMxwXWcWs] S: 250-PIPELINING
+[2025-08-17 12:02:14] DEBUG [qnjMxwXWcWs] S: 250-CHUNKING
+[2025-08-17 12:02:14] DEBUG [qnjMxwXWcWs] S: 250 SMTPUTF8
+[2025-08-17 12:02:14] DEBUG [qnjMxwXWcWs] C: STARTTLS
+[2025-08-17 12:02:14] DEBUG [qnjMxwXWcWs] S: 220 2.0.0 Ready to start TLS
+[2025-08-17 12:02:15] INFO  [qnjMxwXWcWs] Connection upgraded with STARTTLS
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] C: EHLO [127.0.0.1]
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] S: 250-smtp.gmail.com at your service, [77.229.220.61]
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] S: 250-SIZE 35882577
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] S: 250-8BITMIME
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] S: 250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] S: 250-ENHANCEDSTATUSCODES
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] S: 250-PIPELINING
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] S: 250-CHUNKING
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] S: 250 SMTPUTF8
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] SMTP handshake finished
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] C: AUTH PLAIN AGpmbGFidXJAZ21haWwuY29tAC8qIHNlY3JldCAqLw==
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] S: 235 2.7.0 Accepted
+[2025-08-17 12:02:15] INFO  [qnjMxwXWcWs] User "jflabur@gmail.com" authenticated
+[2025-08-17 12:02:15] INFO  Sending message <b85fb996-ae75-42bc-0118-677ac12161dd@gmail.com> to <jflabur@gmail.com>
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] C: MAIL FROM:<jflabur@gmail.com>
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] S: 250 2.1.0 OK ffacd0b85a97d-3bb7f02578dsm9338018f8f.62 - gsmtp
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] C: RCPT TO:<jflabur@gmail.com>
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] S: 250 2.1.5 OK ffacd0b85a97d-3bb7f02578dsm9338018f8f.62 - gsmtp
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] C: DATA
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] S: 354 Go ahead ffacd0b85a97d-3bb7f02578dsm9338018f8f.62 - gsmtp
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] From: jflabur@gmail.com
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] To: jflabur@gmail.com
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] Subject: Rios Cleanup - prueba SMTP
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] Message-ID: <b85fb996-ae75-42bc-0118-677ac12161dd@gmail.com>
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] Content-Transfer-Encoding: quoted-printable
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] Date: Sun, 17 Aug 2025 12:02:14 +0000
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] MIME-Version: 1.0
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] Content-Type: text/plain; charset=utf-8
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] 
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] Este es un mensaje de prueba enviado desde test_smtp_send.js para verificar=
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs]  las credenciales SMTP (no borra archivos).
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] .
+[2025-08-17 12:02:15] INFO  [qnjMxwXWcWs] <419 bytes encoded mime message (source size 416 bytes)>
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] S: 250 2.0.0 OK  1755432137 ffacd0b85a97d-3bb7f02578dsm9338018f8f.62 - gsmtp
+[2025-08-17 12:02:15] DEBUG [qnjMxwXWcWs] Closing connection to the server using "end"
+Mensaje enviado. MessageId: <b85fb996-ae75-42bc-0118-677ac12161dd@gmail.com>
+Response: 250 2.0.0 OK  1755432137 ffacd0b85a97d-3bb7f02578dsm9338018f8f.62 - gsmtp
+Log escrito en: C:\Users\jflabur\Desktop\rios\backend\logs\smtp-test-2025-08-17T12-02-15-921Z.json
+=== Latest smtp-test-*.json (if present) ===
+{
+  "timestamp": "2025-08-17T12:02:15.920Z",
+  "host": "smtp.gmail.com",
+  "port": 587,
+  "secure": false,
+  "user": "jflabur@gmail.com",
+  "to": "jflabur@gmail.com",
+  "ok": true,
+  "messageId": "<b85fb996-ae75-42bc-0118-677ac12161dd@gmail.com>",
+  "response": "250 2.0.0 OK  1755432137 ffacd0b85a97d-3bb7f02578dsm9338018f8f.62 - gsmtp"
+}
+=== Finished ===

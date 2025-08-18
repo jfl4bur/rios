@@ -1,0 +1,53 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [ main, 'feat/**' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies (workspaces-aware)
+        run: npm ci --workspaces
+
+      - name: Debug environment
+        run: |
+          echo "--- debug: node/npm versions ---"
+          node --version || true
+          npm --version || true
+          echo "--- debug: ls backend ---"
+          ls -la backend || true
+          echo "--- debug: backend/package.json ---"
+          if [ -f backend/package.json ]; then cat backend/package.json || true; else echo "backend/package.json not found"; fi
+          echo "--- debug: run backend migrations ---"
+          npm --prefix backend run migrate || true
+          echo "--- debug: seed demo data ---"
+          npm --prefix backend run seed:demo || true
+          echo "--- debug: run backend tests (verbose) ---"
+          npm --prefix backend test --loglevel verbose || true
+
+      - name: Start backend in background (for tests that expect http://localhost:9000)
+        run: |
+          npm --prefix backend start &
+          # give the server a moment to bind to the port
+          sleep 2
+        env:
+          NODE_ENV: test
+
+      - name: Run backend tests
+        run: |
+          export TEST_BACKEND=http://127.0.0.1:9000
+          npm --prefix backend test
+        env:
+          CI: true

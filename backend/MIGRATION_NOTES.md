@@ -11,4 +11,4 @@ ALTER TABLE rios ADD COLUMN lng REAL;
 
 - Filas existentes pueden tener `lat`/`lng` NULL; ejecuta `node scripts/populate_lat_lng.js` para poblar desde `geometry`.
 
-- Recomendación: ejecutar `npm run migrate` y verificar con `node scripts/check_schema_and_rows.js`.
+- Recomendación: ejecutar `npm run migrate` y verificar con `node scripts/check_schema_and_rows.js`. .

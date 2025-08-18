@@ -27,6 +27,10 @@ jobs:
           ls -la backend || true
           echo "--- debug: backend/package.json ---"
           if [ -f backend/package.json ]; then cat backend/package.json || true; else echo "backend/package.json not found"; fi
+          echo "--- debug: run backend migrations ---"
+          npm --prefix backend run migrate || true
+          echo "--- debug: seed demo data ---"
+          npm --prefix backend run seed:demo || true
           echo "--- debug: run backend tests (verbose) ---"
           npm --prefix backend test --loglevel verbose || true
 

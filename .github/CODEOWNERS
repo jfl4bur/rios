@@ -1,0 +1,10 @@
+# CODEOWNERS
+# Propietarios por área para revisión automática de cambios.
+
+# backend: revisiones por jfl4bur
+/backend/ @jfl4bur
+/backend/** @jfl4bur
+
+# docs y CI
+/.github/ @jfl4bur
+/CHANGELOG.md @jfl4bur

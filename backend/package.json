@@ -10,6 +10,7 @@
     "test:smtp": "node scripts/test_smtp_send.js",
     "check": "pwsh -NoProfile -File scripts/run_all_checks.ps1",
     "migrate": "node scripts/run_migrations.js",
+    "migrate:ps1": "pwsh -NoProfile -File scripts/run_migrations.ps1 -DbPath \"backend/data.sqlite\" -RunPostScripts",
     "seed:demo": "node seeds/demo.js",
     "cleanup:uploads": "node scripts/cleanup_uploads.js"
   },

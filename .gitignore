@@ -2,6 +2,9 @@ node_modules/
 .DS_Store
 *.log
 backend/data.sqlite
+backend/logs/
+backend/uploads/
+backend/*.json
 mobile/.dart_tool/
 mobile/.packages
 frontend-admin/node_modules/

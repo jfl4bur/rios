@@ -124,8 +124,6 @@ router.post('/', optional, (req, res) => {
   );
 });
 
-module.exports = router;
-
 // GET /api/rios/:id/gpx  -> export simple GPX for a route
 router.get('/:id/gpx', (req, res) => {
   const id = req.params.id;
@@ -150,34 +148,37 @@ router.get('/:id/gpx', (req, res) => {
     const name = esc(row.nombre || 'ruta');
     const desc = esc(row.descripcion || '');
 
-    let gpx = '<?xml version="1.0" encoding="UTF-8"?>\n';
-    gpx += '<gpx version="1.1" creator="rios-backend" xmlns="http://www.topografix.com/GPX/1/1">\n';
-    gpx += `  <metadata><name>${name}</name><desc>${desc}</desc></metadata>\n`;
+    let gpx = '<?xml version="1.0" encoding="UTF-8"?>\\n';
+    gpx += '<gpx version="1.1" creator="rios-backend" xmlns="http://www.topografix.com/GPX/1/1">\\n';
+    gpx += `  <metadata><name>${name}</name><desc>${desc}</desc></metadata>\\n`;
 
     if (geom && geom.type === 'LineString' && Array.isArray(geom.coordinates)) {
-      gpx += '  <trk>\n';
-      gpx += `    <name>${name}</name>\n`;
-      gpx += '    <trkseg>\n';
+      gpx += '  <trk>\\n';
+      gpx += `    <name>${name}</name>\\n`;
+      gpx += '    <trkseg>\\n';
       for (const c of geom.coordinates) {
         const lon = c[0];
         const lat = c[1];
-        gpx += `      <trkpt lat="${lat}" lon="${lon}"></trkpt>\n`;
+        gpx += `      <trkpt lat=\"${lat}\" lon=\"${lon}\"></trkpt>\\n`;
       }
-      gpx += '    </trkseg>\n';
-      gpx += '  </trk>\n';
+      gpx += '    </trkseg>\\n';
+      gpx += '  </trk>\\n';
     } else if (geom && geom.type === 'Point' && Array.isArray(geom.coordinates)) {
       const lon = geom.coordinates[0];
       const lat = geom.coordinates[1];
-      gpx += `  <wpt lat="${lat}" lon="${lon}"><name>${name}</name></wpt>\n`;
+      gpx += `  <wpt lat=\"${lat}\" lon=\"${lon}\"><name>${name}</name></wpt>\\n`;
     } else {
       // fallback: no geometry, return minimal gpx with name only
-      gpx += `  <wpt lat="0" lon="0"><name>${name}</name><desc>No geometry available</desc></wpt>\n`;
+      gpx += `  <wpt lat=\"0\" lon=\"0\"><name>${name}</name><desc>No geometry available</desc></wpt>\\n`;
     }
 
-    gpx += '</gpx>\n';
+    gpx += '</gpx>\\n';
 
     res.setHeader('Content-Type', 'application/gpx+xml; charset=utf-8');
-    res.setHeader('Content-Disposition', `attachment; filename="${name}.gpx"`);
+    res.setHeader('Content-Disposition', `attachment; filename=\"${name}.gpx\"`);
     return res.send(gpx);
   });
 });
+
+module.exports = router;
+          if (coords.length === 1) normalized = { type: 'Point', coordinates: coords[0] };

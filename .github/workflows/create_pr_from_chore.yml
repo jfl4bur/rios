@@ -9,6 +9,9 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    env:
+      # optional PAT secret: if present, the workflow will use it to create the PR
+      PR_TOKEN: ${{ secrets.CREATE_PR_PAT }}
 
     steps:
       - name: Checkout
@@ -23,21 +26,41 @@ jobs:
             const title = 'chore: docs and migrations — migration notes & scripts';
             const body = 'Añade MIGRATION_NOTES y scripts de migración (run_migrations.ps1). Mover docs a PR para revisión.';
 
+            // decide which token to use: optional secret PAT or the default GITHUB_TOKEN
+            const token = process.env.PR_TOKEN || process.env.GITHUB_TOKEN;
+            let oct;
+            if (token && token !== process.env.GITHUB_TOKEN) {
+              // create an authenticated client using the provided PAT
+              const { getOctokit } = require('@actions/github');
+              oct = getOctokit(token);
+            } else {
+              // fall back to the provided 'github' client (uses GITHUB_TOKEN)
+              oct = github;
+            }
+
             // verify branch exists
             try {
-              await github.rest.repos.getBranch({ owner: context.repo.owner, repo: context.repo.repo, branch: head });
+              await oct.rest.repos.getBranch({ owner: context.repo.owner, repo: context.repo.repo, branch: head });
             } catch (err) {
               core.setFailed(`Branch ${head} not found: ${err.message}`);
             }
 
             // check if a PR from head->base already exists
-            const existing = await github.rest.pulls.list({ owner: context.repo.owner, repo: context.repo.repo, head: `${context.repo.owner}:${head}`, base });
+            const existing = await oct.rest.pulls.list({ owner: context.repo.owner, repo: context.repo.repo, head: `${context.repo.owner}:${head}`, base });
             if (existing.data && existing.data.length > 0) {
               console.log(`PR already exists: ${existing.data[0].html_url}`);
               return;
             }
 
-            // create the PR
-            const pr = await github.rest.pulls.create({ owner: context.repo.owner, repo: context.repo.repo, head, base, title, body });
-            console.log(`PR created: ${pr.data.html_url}`);
-            return pr.data.html_url;
+            // try to create the PR; if 403 and we attempted with GITHUB_TOKEN, give clear instructions
+            try {
+              const pr = await oct.rest.pulls.create({ owner: context.repo.owner, repo: context.repo.repo, head, base, title, body });
+              console.log(`PR created: ${pr.data.html_url}`);
+              return pr.data.html_url;
+            } catch (err) {
+              if (err && err.status === 403 && (!process.env.PR_TOKEN || process.env.PR_TOKEN === '')) {
+                core.setFailed('GitHub Actions is not permitted to create pull requests with the default token in this repository. Add a Personal Access Token as the repository secret `CREATE_PR_PAT` with `repo` scope and re-run this workflow.');
+              } else {
+                core.setFailed(err.message || String(err));
+              }
+            }

@@ -1,0 +1,36 @@
+name: Backend checks (PR)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  backend-checks:
+    name: Backend checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install backend dependencies
+        run: npm --prefix backend ci
+
+      - name: Run backend checks (smoke / env loader)
+        run: npm --prefix backend run check
+
+      - name: Run backend unit tests
+        run: npm --prefix backend test
+
+      - name: Upload test results (logs)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-check-logs
+          path: |
+            backend/tests/**
+            backend/*.log

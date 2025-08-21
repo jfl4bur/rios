@@ -12,7 +12,11 @@
     "migrate": "node scripts/run_migrations.js",
     "migrate:ps1": "pwsh -NoProfile -File scripts/run_migrations.ps1 -DbPath \"backend/data.sqlite\" -RunPostScripts",
     "seed:demo": "node seeds/demo.js",
-    "cleanup:uploads": "node scripts/cleanup_uploads.js"
+    "cleanup:uploads": "node scripts/cleanup_uploads.js",
+    "create-test-db": "node scripts/create_test_db.js",
+    "start-dummy-server": "node scripts/start_dummy_server.js",
+  "test:local": "npm run create-test-db && npm test",
+  "test:local:all": "node scripts/test_local_all.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

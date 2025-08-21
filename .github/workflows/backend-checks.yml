@@ -67,8 +67,12 @@ jobs:
           db.close();
           JS
 
-      - name: Run backend checks (smoke / env loader)
-        run: npm --prefix backend run check
+      - name: Create logs dir
+        run: |
+          mkdir -p backend/logs
+
+      - name: Run backend env loader check (Node)
+        run: npm --prefix backend run test:env
 
       - name: Run backend unit tests
         run: npm --prefix backend test
@@ -81,3 +85,4 @@ jobs:
           path: |
             backend/tests/**
             backend/*.log
+            backend/logs/**

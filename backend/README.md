@@ -49,3 +49,33 @@ Soporte de waypoints
 - El backend acepta ahora `waypoints: [{lat,lng}, ...]` y los convierte internamente a GeoJSON `LineString`.
 - Tests que verifican esto: `backend/tests/post_rios.test.js` (test 'LineString via waypoints').
 
+API — endpoint paginado GET /api/rios
+------------------------------------
+
+GET /api/rios
+
+- Parámetros query:
+  - `page` (opcional): número de página (entero, default 1).
+  - `limit` (opcional): items por página (entero, default 20, máximo 100).
+
+- Respuesta (200):
+
+```json
+{
+  "items": [ /* array de objetos rio; cada item incluye campo geometry parseado (objeto GeoJSON) */ ],
+  "total": 123,    /* total de registros en la colección */
+  "page": 1,
+  "limit": 20
+}
+```
+
+- Errores comunes:
+  - `400` si `page` o `limit` no son numéricos.
+
+Ejemplo:
+
+GET /api/rios?page=2&limit=10
+
+Devolverá hasta 10 rutas (items) y el total de rutas disponibles.
+
+

@@ -1,0 +1,43 @@
+name: Create PR from chore/migrations-docs
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create pull request (if missing)
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const head = 'chore/migrations-docs';
+            const base = 'main';
+            const title = 'chore: docs and migrations — migration notes & scripts';
+            const body = 'Añade MIGRATION_NOTES y scripts de migración (run_migrations.ps1). Mover docs a PR para revisión.';
+
+            // verify branch exists
+            try {
+              await github.rest.repos.getBranch({ owner: context.repo.owner, repo: context.repo.repo, branch: head });
+            } catch (err) {
+              core.setFailed(`Branch ${head} not found: ${err.message}`);
+            }
+
+            // check if a PR from head->base already exists
+            const existing = await github.rest.pulls.list({ owner: context.repo.owner, repo: context.repo.repo, head: `${context.repo.owner}:${head}`, base });
+            if (existing.data && existing.data.length > 0) {
+              console.log(`PR already exists: ${existing.data[0].html_url}`);
+              return;
+            }
+
+            // create the PR
+            const pr = await github.rest.pulls.create({ owner: context.repo.owner, repo: context.repo.repo, head, base, title, body });
+            console.log(`PR created: ${pr.data.html_url}`);
+            return pr.data.html_url;

@@ -24,8 +24,33 @@ jobs:
       - name: Install backend dependencies
         run: npm --prefix backend ci
 
-      - name: Start dummy HTTP server
-        run: python3 -m http.server 9000 &
+      - name: Start dummy HTTP server (Node)
+        run: |
+          cat > dummy-server.js <<'JS'
+          const http = require('http');
+          const url = require('url');
+
+          const server = http.createServer((req, res) => {
+            const parsed = url.parse(req.url, true);
+            if (req.method === 'POST' && parsed.pathname === '/api/multimedia/upload') {
+              let body = '';
+              req.on('data', chunk => body += chunk);
+              req.on('end', () => {
+                res.writeHead(200, {'Content-Type': 'application/json'});
+                res.end(JSON.stringify({ ok: true, id: 'ci-mock' }));
+              });
+              return;
+            }
+            // default: simple 200 JSON for any GET
+            res.writeHead(200, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({ ok: true }));
+          });
+
+          server.listen(9000, '127.0.0.1');
+          // keep process alive in background
+          console.log('dummy server listening on 9000');
+          JS
+          node dummy-server.js &
 
       - name: Prepare sqlite DB for tests
         run: |

@@ -88,3 +88,18 @@ Referencias:
 - PR: https://github.com/jfl4bur/rios/pull/1
 - Release: https://github.com/jfl4bur/rios/releases/tag/v1.0.0
 
+
+## Unreleased / 2025-08-22
+
+### Changes
+
+- Merge: PR #16 — feat(rios): paginated GET /api/rios
+	- Añade endpoint paginado `GET /api/rios` con parámetros `page` y `limit`.
+	- Tests: `backend/tests/list_rios.test.js` añadido para verificar paginación.
+	- Docs: `backend/README.md` actualizado con descripción del endpoint.
+
+### CI / infra
+
+- La integración CI fue ajustada para arrancar un servidor dummy y crear la DB sqlite en los jobs de test; runs recientes para la PR y merge pasaron correctamente.
+
+

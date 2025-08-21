@@ -39,7 +39,7 @@ test('GET /api/rios/:id returns geometry as parsed JSON', async () => {
   const port = server.address().port;
   const dbPath = path.join(__dirname, '..', 'data.sqlite');
 
-  const id = 'test-get-1';
+  const id = 'test-get-' + Date.now() + '-' + Math.floor(Math.random()*10000);
   const row = {
     id,
     nombre: 'GetById Test',

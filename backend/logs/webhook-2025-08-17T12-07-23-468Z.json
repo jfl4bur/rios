@@ -1,0 +1,26 @@
+{
+  "args": {}, 
+  "data": "{\"timestamp\":\"2025-08-17T12:07:22.768Z\",\"days\":7,\"removed\":1,\"candidates\":1,\"files\":[\"test-old-webhook.txt\"]}", 
+  "files": {}, 
+  "form": {}, 
+  "headers": {
+    "Accept": "*/*", 
+    "Accept-Encoding": "gzip,deflate", 
+    "Content-Length": "109", 
+    "Content-Type": "application/json", 
+    "Host": "httpbin.org", 
+    "User-Agent": "node-fetch/1.0 (+https://github.com/bitinn/node-fetch)", 
+    "X-Amzn-Trace-Id": "Root=1-68a1c5fc-1d7b236f11e6893c7d878284"
+  }, 
+  "json": {
+    "candidates": 1, 
+    "days": 7, 
+    "files": [
+      "test-old-webhook.txt"
+    ], 
+    "removed": 1, 
+    "timestamp": "2025-08-17T12:07:22.768Z"
+  }, 
+  "origin": "77.229.220.61", 
+  "url": "https://httpbin.org/post"
+}

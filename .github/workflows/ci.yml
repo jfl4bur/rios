@@ -11,17 +11,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - name: Install dependencies (workspaces-aware)
-        run: npm ci --workspaces
-
-      - name: Start backend in background (for tests that expect http://localhost:9000)
-        run: |
-          npm --prefix backend start &
-          sleep 2
-        env:
-          NODE_ENV: test
-
+      - name: Install root deps
+        run: npm ci
+      - name: Install backend deps
+        run: npm --prefix backend ci
       - name: Run backend tests
-        run: |
-          export TEST_BACKEND=http://127.0.0.1:9000
-          npm --prefix backend test
+        run: npm --prefix backend test

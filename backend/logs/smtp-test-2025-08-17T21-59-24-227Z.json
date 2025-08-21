@@ -1,0 +1,11 @@
+{
+  "timestamp": "2025-08-17T21:59:24.227Z",
+  "host": "smtp.gmail.com",
+  "port": 587,
+  "secure": false,
+  "user": "jflabur@gmail.com",
+  "to": "jflabur@gmail.com",
+  "ok": true,
+  "messageId": "<f33da2ed-2348-caed-f7b0-0c1e6ebe6119@gmail.com>",
+  "response": "250 2.0.0 OK  1755467966 5b1f17b1804b1-45a1c6c324fsm142477735e9.1 - gsmtp"
+}

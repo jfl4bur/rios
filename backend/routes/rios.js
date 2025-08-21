@@ -12,12 +12,31 @@ const MAX_WAYPOINTS = process.env.MAX_WAYPOINTS ? Number(process.env.MAX_WAYPOIN
 function isNumberFinite(v) { return v !== null && v !== undefined && !Number.isNaN(Number(v)) && Number.isFinite(Number(v)); }
 
 // GET /api/rios
+// GET /api/rios (paginated)
 router.get('/', (req, res) => {
+  const page = Math.max(1, Number(req.query.page) || 1);
+  const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 20));
+  const offset = (page - 1) * limit;
+
   const db = new sqlite3.Database(dbPath);
-  db.all('SELECT * FROM rios', (err, rows) => {
-    db.close();
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
+  db.serialize(() => {
+    db.get('SELECT COUNT(*) AS cnt FROM rios', (err, countRow) => {
+      if (err) {
+        db.close();
+        return res.status(500).json({ error: err.message });
+      }
+      const total = countRow ? Number(countRow.cnt) : 0;
+      db.all('SELECT * FROM rios LIMIT ? OFFSET ?', [limit, offset], (err2, rows) => {
+        db.close();
+        if (err2) return res.status(500).json({ error: err2.message });
+        // parse geometry field for each row
+        const items = rows.map(r => {
+          try { r.geometry = r.geometry ? JSON.parse(r.geometry) : null; } catch(e) { r.geometry = null; }
+          return r;
+        });
+        res.json({ items, total, page, limit });
+      });
+    });
   });
 });
 

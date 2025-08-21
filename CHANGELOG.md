@@ -89,7 +89,7 @@ Referencias:
 - Release: https://github.com/jfl4bur/rios/releases/tag/v1.0.0
 
 
-## Unreleased / 2025-08-22
+## v1.0.1 - 2025-08-22
 
 ### Changes
 

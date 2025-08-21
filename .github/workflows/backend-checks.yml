@@ -18,7 +18,7 @@ jobs:
           node-version: '24'
 
       - name: Install backend dependencies
-        run: npm --prefix backend ci
+        run: npm --prefix backend install
 
       - name: Run backend checks (smoke / env loader)
         run: npm --prefix backend run check

@@ -1,0 +1,17 @@
+
+  "vulnerabilities": {
+      "severity": "critical",
+      "severity": "critical",
+      "severity": "critical",
+      "severity": "high",
+      "severity": "critical",
+          "severity": "critical",
+      "severity": "high",
+          "severity": "high",
+      "severity": "high",
+    "vulnerabilities": {
+      "low": 0,
+      "moderate": 0,
+      "high": 3,
+      "critical": 4,
+

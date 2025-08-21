@@ -5,15 +5,81 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      CLEANUP_SMTP_USER: 'ci@example.invalid'
+      CLEANUP_SMTP_PASS: 'ci'
+      CLEANUP_SMTP_HOST: 'localhost'
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '24'
+
       - name: Install root deps
         run: npm ci
+
       - name: Install backend deps
         run: npm --prefix backend ci
+
+      - name: Start dummy HTTP server (Node)
+        run: |
+          cat > dummy-server.js <<'JS'
+          const http = require('http');
+          const url = require('url');
+
+          const server = http.createServer((req, res) => {
+            const parsed = url.parse(req.url, true);
+            if (req.method === 'POST' && parsed.pathname === '/api/multimedia/upload') {
+              let body = '';
+              req.on('data', chunk => body += chunk);
+              req.on('end', () => {
+                res.writeHead(200, {'Content-Type': 'application/json'});
+                res.end(JSON.stringify({ ok: true, id: 'ci-mock' }));
+              });
+              return;
+            }
+            res.writeHead(200, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({ ok: true }));
+          });
+
+          server.listen(9000, '127.0.0.1');
+          console.log('dummy server listening on 9000');
+          JS
+          node dummy-server.js &
+
+      - name: Prepare sqlite DB for tests
+        run: |
+          cd backend
+          node <<'JS'
+          const sqlite3 = require('sqlite3').verbose();
+          const path = require('path');
+          const dbFile = path.resolve(process.cwd(), 'data.sqlite');
+          const db = new sqlite3.Database(dbFile);
+          db.serialize(() => {
+            db.run("CREATE TABLE IF NOT EXISTS usuarios (id TEXT PRIMARY KEY, nombre TEXT, email TEXT)");
+            db.run("CREATE TABLE IF NOT EXISTS rios (id TEXT PRIMARY KEY, nombre TEXT, descripcion TEXT, categoria TEXT, dificultad TEXT, duracion_estimada INTEGER, geometry TEXT, multimedia TEXT, lat REAL, lng REAL)");
+          });
+          db.close();
+          JS
+
+      - name: Create logs dir
+        run: |
+          mkdir -p backend/logs
+
+      - name: Run backend env loader check (Node)
+        run: npm --prefix backend run test:env
+
       - name: Run backend tests
         run: npm --prefix backend test
+
+      - name: Upload test results (logs)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-backend-logs
+          path: |
+            backend/tests/**
+            backend/*.log
+            backend/logs/**

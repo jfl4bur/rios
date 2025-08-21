@@ -134,4 +134,18 @@ router.get('/:id/gpx', (req, res) => {
   });
 });
 
+// GET /api/rios/:id  -> return JSON record
+router.get('/:id', (req, res) => {
+  const id = req.params.id;
+  const db = new sqlite3.Database(dbPath);
+  db.get('SELECT * FROM rios WHERE id = ?', [id], (err, row) => {
+    db.close();
+    if (err) return res.status(500).json({ error: err.message });
+    if (!row) return res.status(404).json({ error: 'Not found' });
+    // try to parse geometry JSON if present
+    try { row.geometry = row.geometry ? JSON.parse(row.geometry) : null; } catch (e) { row.geometry = null; }
+    res.json(row);
+  });
+});
+
 module.exports = router;

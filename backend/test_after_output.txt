@@ -1,0 +1,66 @@
+ECHO test: stdout visible
+ECHO test: stderr visible
+node: v24.3.0
+Test básico: OK (si estás viendo esto, Node está instalado en entorno de ejecución).
+Running env loader test (no external network calls are made by this script if no creds)
+Exit code: 0
+Stdout: Imported Machine var CLEANUP_SMTP_HOST to process.env
+Imported Machine var CLEANUP_SMTP_PORT to process.env
+Imported Machine var CLEANUP_SMTP_USER to process.env
+Imported Machine var CLEANUP_SMTP_PASS
+Stderr: 
+Env loader basic smoke test completed (manual verification of messages recommended)
+Backend escuchando en puerto 0
+ECHO done
+[
+  {
+    "id": "u1",
+    "nombre": "Demo User 1",
+    "email": "demo1@example.com"
+  },
+  {
+    "id": "u2",
+    "nombre": "Demo User 2",
+    "email": "demo2@example.com"
+  }
+]
+Wrote multimedia_test.out
+Wrote http_check.out
+Backend escuchando en puerto 0
+✔ POST /api/rios accepts multimedia within limits (156.3346ms)
+Upload response: {
+  "files": [
+    {
+      "filename": "1755795300877-ad55ed09-4821-4d6d-bf89-e3ea8dcc3fa8.png",
+      "path": "/uploads/1755795300877-ad55ed09-4821-4d6d-bf89-e3ea8dcc3fa8.png",
+      "size": 103,
+      "originalMime": "image/png",
+      "detectedMime": "image/png",
+      "detectedExt": ".png",
+      "compressed": true,
+      "thumbnail": "/uploads/thumb-1755795300877-ad55ed09-4821-4d6d-bf89-e3ea8dcc3fa8.jpg",
+      "thumbnailSize": 807
+    }
+  ]
+}
+Backend escuchando en puerto 0
+✔ POST /api/rios rejects too many multimedia items (33.8142ms)
+Backend escuchando en puerto 0
+✔ POST /api/rios accepts Point geometry (35.793ms)
+Backend escuchando en puerto 0
+✔ POST /api/rios accepts LineString via waypoints (20.5492ms)
+Backend escuchando en puerto 0
+✔ POST /api/rios rejects invalid geometry (14.8558ms)
+Backend escuchando en puerto 0
+✔ POST /api/rios rejects too many waypoints (20.0835ms)
+Backend escuchando en puerto 0
+✔ POST /api/rios rejects missing title and geometry - validation (18.0625ms)
+✔ POST /api/rios rejects invalid waypoint object (13.2431ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7116.1763

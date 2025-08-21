@@ -6,6 +6,9 @@ const sqlite3 = require('sqlite3').verbose();
 const { optional } = require('../middleware/firebaseAuth');
 const { createRiosSchema } = require('../validation/riosSchema');
 
+const MAX_MEDIA = process.env.MAX_MEDIA ? Number(process.env.MAX_MEDIA) : 20;
+const MAX_WAYPOINTS = process.env.MAX_WAYPOINTS ? Number(process.env.MAX_WAYPOINTS) : 200;
+
 function isNumberFinite(v) { return v !== null && v !== undefined && !Number.isNaN(Number(v)) && Number.isFinite(Number(v)); }
 
 // GET /api/rios
@@ -23,6 +26,27 @@ router.post('/', optional, (req, res) => {
   const { error, value } = createRiosSchema.validate(req.body, { abortEarly: false, allowUnknown: true });
   if (error) return res.status(400).json({ error: 'Validation failed' });
   req.body = value;
+
+  // enforce configured limits and transform waypoints -> LineString
+  if (Array.isArray(req.body.multimedia) && req.body.multimedia.length > MAX_MEDIA) {
+    return res.status(422).json({ error: `Too many multimedia items (max ${MAX_MEDIA})` });
+  }
+  if (Array.isArray(req.body.waypoints)) {
+    if (req.body.waypoints.length > MAX_WAYPOINTS) {
+      return res.status(422).json({ error: `Too many waypoints (max ${MAX_WAYPOINTS})` });
+    }
+    // convert waypoints to LineString geometry if present
+    const coords = [];
+    for (const wp of req.body.waypoints) {
+      if (wp && isNumberFinite(wp.lat) && isNumberFinite(wp.lng)) {
+        coords.push([Number(wp.lng), Number(wp.lat)]);
+      }
+    }
+    if (coords.length > 0) {
+      // override/define geometry as LineString
+      req.body.geometry = { type: 'LineString', coordinates: coords };
+    }
+  }
 
   const nombre = req.body.nombre || req.body.title || '';
   const descripcion = req.body.descripcion || req.body.description || '';

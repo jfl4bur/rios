@@ -8,6 +8,10 @@ jobs:
   backend-checks:
     name: Backend checks
     runs-on: ubuntu-latest
+    env:
+      CLEANUP_SMTP_USER: 'ci@example.invalid'
+      CLEANUP_SMTP_PASS: 'ci'
+      CLEANUP_SMTP_HOST: 'localhost'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -19,6 +23,14 @@ jobs:
 
       - name: Install backend dependencies
         run: npm --prefix backend ci
+
+      - name: Start dummy HTTP server
+        run: python3 -m http.server 9000 &
+
+      - name: Prepare sqlite DB for tests
+        run: |
+          cd backend
+          node -e "const sqlite3=require('sqlite3').verbose();const db=new sqlite3.Database('test.db');db.serialize(()=>{db.run('CREATE TABLE IF NOT EXISTS usuarios (id TEXT PRIMARY KEY, email TEXT)');}); db.close();"
 
       - name: Run backend checks (smoke / env loader)
         run: npm --prefix backend run check

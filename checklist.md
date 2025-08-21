@@ -56,7 +56,7 @@ Esta versión del checklist refleja el estado actual del repositorio en la fecha
 - [x] Sistema de niveles de dificultad
 - [x] Cálculo de duración estimada (campo `duracion_estimada`)
 - [x] Asociación de multimedia (campo `multimedia` / endpoints)
-- [ ] Sistema de waypoints (to-do)
+ - [x] Sistema de waypoints (implementado en backend: conversión de waypoints a LineString)
 - [x] Validación de datos (to-do)
 
 ### 4.2 Visualización

@@ -1,0 +1,7 @@
+Vulnerabilities summary (backend):
+- critical: 4
+- high: 3
+- moderate: 0
+- low: 0
+- total: 7
+

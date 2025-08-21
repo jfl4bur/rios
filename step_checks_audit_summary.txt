@@ -1,0 +1,8 @@
+
+  "vulnerabilities": {},
+    "vulnerabilities": {
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+

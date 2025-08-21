@@ -44,10 +44,11 @@ jobs:
             res.end(JSON.stringify({ ok: true }));
           });
 
-          server.listen(9000, '127.0.0.1');
-          console.log('dummy server listening on 9000');
+          const port = process.env.DUMMY_PORT ? Number(process.env.DUMMY_PORT) : 9000;
+          server.listen(port, '127.0.0.1', () => console.log('dummy server listening on', port));
           JS
           node dummy-server.js &
+          echo $! > backend/logs/dummy.pid || true
 
       - name: Prepare sqlite DB for tests
         run: |
@@ -73,6 +74,13 @@ jobs:
 
       - name: Run backend tests
         run: npm --prefix backend test
+
+      - name: Stop dummy server
+        if: always()
+        run: |
+          if [ -f backend/logs/dummy.pid ]; then
+            kill "$(cat backend/logs/dummy.pid)" || true
+          fi
 
       - name: Upload test results (logs)
         if: always()

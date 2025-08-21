@@ -54,12 +54,17 @@ router.post('/', optional, (req, res) => {
   const dificultad = req.body.dificultad || req.body.dificulty || 'medio';
   const duracion_estimada = req.body.duracion_estimada || req.body.duracion_estimated || null;
 
-  // prefer explicit lat/lng or point geometry
+  // prefer explicit lat/lng or point/linestring geometry
   let geometry = null, repLat = null, repLng = null;
-  if (req.body.geometry && req.body.geometry.type === 'Point' && Array.isArray(req.body.geometry.coordinates)) {
-    geometry = req.body.geometry;
-    repLng = Number(geometry.coordinates[0]);
-    repLat = Number(geometry.coordinates[1]);
+  if (req.body.geometry && Array.isArray(req.body.geometry.coordinates)) {
+    if (req.body.geometry.type === 'Point') {
+      geometry = req.body.geometry;
+      repLng = Number(geometry.coordinates[0]);
+      repLat = Number(geometry.coordinates[1]);
+    } else if (req.body.geometry.type === 'LineString') {
+      // keep linestring geometry as-is
+      geometry = req.body.geometry;
+    }
   } else if (isNumberFinite(req.body.lat) && isNumberFinite(req.body.lng)) {
     repLat = Number(req.body.lat);
     repLng = Number(req.body.lng);

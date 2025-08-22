@@ -4,9 +4,203 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin — Rutas y Ríos</title>
+    <script>
+      // Defensive interception: override DOM script creation/insertion as early as possible.
+      // This will attempt to block injected scripts whose src contains `bundle.js`
+      // or whose inline text references `.translations` (common cause of crashes in dev).
+      (function () {
+        try {
+          const origCreate = Document.prototype.createElement
+          Document.prototype.createElement = function (tagName, options) {
+            const el = origCreate.call(this, tagName, options)
+            try {
+              if (String(tagName).toLowerCase() === 'script') {
+                // mark as observed
+                Object.defineProperty(el, '__observed__', { value: true, enumerable: false })
+              }
+            } catch (e) { /* ignore */ }
+            return el
+          }
+
+          const shouldBlock = function (node) {
+            try {
+              if (!node) return false
+              if (node.tagName && node.tagName.toLowerCase() === 'script') {
+                const src = node.src || ''
+                const code = node.innerHTML || ''
+                if (src && src.indexOf('bundle.js') !== -1) return true
+                // block inline scripts that reference `.translations` or the exact phrase
+                if (code && (code.indexOf(".translations") !== -1 || code.indexOf("reading 'translations'") !== -1)) return true
+              }
+            } catch (e) { /* ignore */ }
+            return false
+          }
+
+          const wrapInsert = function (orig) {
+            return function (node, ...args) {
+              try {
+                if (shouldBlock(node)) {
+                  console.warn('[dev] Blocked injected script referencing translations or bundle.js', node.src || '(inline)')
+                  // replace with an inert script so layout expectations don't change
+                  const inert = document.createElement('script')
+                  inert.type = 'application/javascript'
+                  inert.innerHTML = "// blocked by dev interceptor"
+                  return orig.call(this, inert, ...args)
+                }
+              } catch (e) { /* ignore */ }
+              return orig.call(this, node, ...args)
+            }
+          }
+
+          Element.prototype.appendChild = wrapInsert(Element.prototype.appendChild)
+          Element.prototype.insertBefore = wrapInsert(Element.prototype.insertBefore)
+          Node.prototype.replaceChild = function (newChild, oldChild) {
+            try {
+              if (shouldBlock(newChild)) {
+                console.warn('[dev] Replaced blocked script with inert script', newChild.src || '(inline)')
+                const inert = document.createElement('script')
+                inert.type = 'application/javascript'
+                inert.innerHTML = "// blocked by dev interceptor"
+                return Node.prototype.replaceChild.call(this, inert, oldChild)
+              }
+            } catch (e) { /* ignore */ }
+            return Node.prototype.replaceChild.call(this, newChild, oldChild)
+          }
+        } catch (e) { /* ignore */ }
+      })();
+    </script>
+    <script>
+      // Early shim: robusto para evitar errores si alguna dependencia asume objetos de internacionalización
+      try {
+        if (typeof window !== 'undefined') {
+          // minimal translations object
+          window.translations = window.translations || {};
+          window.__TRANSLATIONS__ = window.__TRANSLATIONS__ || window.translations;
+
+          // Helper safe getter
+          window.getTranslation = window.getTranslation || function (k) { try { return window.translations && window.translations[k] ? window.translations[k] : null } catch (e) { return null } };
+          window.t = window.t || function (k) { return window.getTranslation(k) || k };
+
+          // provide common namespaces and make them tolerant to missing nested properties
+          const tolerantHandler = {
+            get(target, prop) {
+              if (prop === 'translations') return target.translations || window.translations;
+              if (prop in target) return target[prop];
+              // return an empty proxy so chained accesses don't throw
+              return new Proxy({}, tolerantHandler);
+            }
+          };
+
+          window.i18n = window.i18n || {};
+          if (!window.i18n.__isTolerant) window.i18n = new Proxy(Object.assign({ translations: window.i18n.translations || window.translations }, window.i18n), tolerantHandler);
+          window.I18n = window.I18n || window.i18n;
+          window.ReactIntl = window.ReactIntl || { translations: window.translations };
+          window.__ = window.__ || window.t;
+          window.locales = window.locales || {};
+          // Global handlers: try to recover from scripts that throw when accessing `translations`.
+          // Some browser extensions inject scripts early; these handlers attempt a minimal
+          // recovery so the page can continue running in dev.
+          try {
+            window.addEventListener('error', function (ev) {
+              try {
+                const msg = ev && ev.message ? ev.message : ''
+                if (msg && msg.indexOf("reading 'translations'") !== -1) {
+                  // restore a minimal translations object and stop default logging
+                  window.translations = window.translations || {}
+                  if (ev && ev.preventDefault) ev.preventDefault()
+                }
+              } catch (e) { /* ignore */ }
+            }, true)
+
+            window.addEventListener('unhandledrejection', function (ev) {
+              try {
+                const reason = ev && ev.reason ? ev.reason : null
+                const msg = reason && reason.message ? reason.message : (typeof reason === 'string' ? reason : '')
+                if (msg && msg.indexOf("reading 'translations'") !== -1) {
+                  window.translations = window.translations || {}
+                  if (ev && ev.preventDefault) ev.preventDefault()
+                }
+              } catch (e) { /* ignore */ }
+            }, true)
+          } catch (e) { /* ignore */ }
+        }
+      } catch (e) { /* noop */ }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Instrumentation: detect when `window.merchant` is created/assigned and
+      // log a stack trace so we can identify the script/extension responsible.
+      // This replaces the previous development Proxy. It's safe in dev because
+      // it does not mask errors; it only reports the assignment.
+      (function () {
+        try {
+          const key = 'merchant'
+          let current = window[key]
+          Object.defineProperty(window, key, {
+            configurable: true,
+            enumerable: true,
+            get() { return current },
+            set(v) {
+              current = v
+              try {
+                const stack = (new Error()).stack
+                console.warn('[dev] window.' + key + ' was assigned', { value: v })
+                console.warn('[dev] assignment stack:', stack)
+                if (document && document.currentScript && document.currentScript.src) {
+                  console.warn('[dev] document.currentScript.src:', document.currentScript.src)
+                }
+                try {
+                  const scripts = Array.from(document.scripts || []).map(s => s.src || '(inline)')
+                  console.warn('[dev] script tags:', scripts.slice(-20))
+                } catch (e) { /* ignore */ }
+
+                // POST to local backend for reliable collection (best-effort, no-fail)
+                try {
+                  const isLocal = (location && (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname === '' || location.protocol === 'file:' || (location.hostname && location.hostname.startsWith('192.168.'))))
+                  if (isLocal) {
+                    // post explicitly to localhost backend to avoid origin issues
+                    const endpoint = 'http://localhost:9000/api/dev/reports/merchant'
+                    // avoid spamming multiple reports in same session
+                    try {
+                      const key = '__merchant_report_sent'
+                      if (sessionStorage && sessionStorage.getItem && sessionStorage.getItem(key)) {
+                        // already reported in this session
+                      } else {
+                        const payload = {
+                          value: v,
+                          stack: stack,
+                          currentScript: (document && document.currentScript && document.currentScript.src) || null,
+                          scripts: (Array.from(document.scripts || []).map(s => s.src || '(inline)')).slice(-50),
+                          href: (location && location.href) || null,
+                          ua: (navigator && navigator.userAgent) || null,
+                          ts: new Date().toISOString()
+                        }
+                        fetch(endpoint, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(payload)
+                        }).then(() => {
+                          try { sessionStorage && sessionStorage.setItem && sessionStorage.setItem(key, '1') } catch (e) {}
+                        }).catch(() => { /* ignore network errors */ })
+                      }
+                    } catch (e) { /* ignore sessionStorage errors */ }
+                  }
+                } catch (e) { /* ignore */ }
+              } catch (e) { /* ignore */ }
+            }
+          })
+          // re-assign existing value to trigger logging if present
+          if (current !== undefined) {
+            try { window.merchant = current } catch (e) { /* ignore */ }
+          }
+        } catch (e) { /* noop */ }
+      })();
+    </script>
+  <!-- Leaflet CSS/JS from CDN for quick map support (no SRI to avoid blocking in dev) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

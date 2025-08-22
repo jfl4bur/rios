@@ -36,7 +36,7 @@ Esta versión del checklist refleja el estado actual del repositorio en la fecha
 - [x] Instalar SQLite (db code y migrations)
 - [x] Crear estructura de base de datos (migrations y seed)
 - [x] Configurar middleware básico (Firebase auth middleware present)
-- [ ] Preparar migración a PostgreSQL
+- [~] Preparar migración a PostgreSQL (en progreso — PR #29 merged: added Postgres adapter, docker-compose and test runner)
 
 ### 3.4 Servicios Externos
 - [ ] Configurar Firebase Authentication (credentials required)

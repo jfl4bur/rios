@@ -47,10 +47,10 @@ Esta versión del checklist refleja el estado actual del repositorio en la fecha
 
 ## 4. 📱 Funcionalidades Core
 
-### 4.1 CRUD de Rutas
+-### 4.1 CRUD de Rutas
 - [x] Crear modelo de datos para rutas (tabla `rios`)
 - [x] GET/POST básicos implementados (`/api/rios`)
-- [ ] Implementar formulario de creación (frontend)
+- [x] Implementar formulario de creación (frontend)
 - [x] Sistema de categorías (campo `categoria`)
 - [x] Gestión de coordenadas GPS (geometry JSON)
 - [x] Sistema de niveles de dificultad

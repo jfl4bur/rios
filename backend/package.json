@@ -15,7 +15,8 @@
     "cleanup:uploads": "node scripts/cleanup_uploads.js",
     "create-test-db": "node scripts/create_test_db.js",
     "start-dummy-server": "node scripts/start_dummy_server.js",
-  "test:local": "npm run create-test-db && npm test",
+    "test:with-dummy": "node scripts/run_tests_with_dummy_server.js",
+  "test:local": "npm run create-test-db && npm run test:with-dummy",
   "test:local:all": "node scripts/test_local_all.js"
   },
   "dependencies": {

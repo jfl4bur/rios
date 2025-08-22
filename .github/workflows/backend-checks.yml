@@ -1,6 +1,7 @@
 name: Backend checks (PR)
 
 on:
+  workflow_dispatch: {}
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
@@ -75,7 +76,7 @@ jobs:
         run: npm --prefix backend run test:env
 
       - name: Run backend unit tests
-        run: npm --prefix backend test
+        run: npm --prefix backend run test:local
 
       - name: Upload test results (logs)
         if: always()

@@ -1,73 +1,18 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin — Rutas y Ríos</title>
     <script>
-      // Defensive interception: override DOM script creation/insertion as early as possible.
-      // This will attempt to block injected scripts whose src contains `bundle.js`
-      // or whose inline text references `.translations` (common cause of crashes in dev).
+      // Dev note: the previous aggressive DOM interception (overriding
+      // createElement/appendChild/replaceChild) has been removed because it
+      // proved too intrusive. If you need to reenact it for short-term
+      // debugging, see PR #30. The remaining shims and instrumentation
+      // (i18n shim and merchant watcher) are still present and guarded to
+      // run only on localhost/file: environments.
       (function () {
         try {
-          const origCreate = Document.prototype.createElement
-          Document.prototype.createElement = function (tagName, options) {
-            const el = origCreate.call(this, tagName, options)
-            try {
-              if (String(tagName).toLowerCase() === 'script') {
-                // mark as observed
-                Object.defineProperty(el, '__observed__', { value: true, enumerable: false })
-              }
-            } catch (e) { /* ignore */ }
-            return el
-          }
-
-          const shouldBlock = function (node) {
-            try {
-              if (!node) return false
-              if (node.tagName && node.tagName.toLowerCase() === 'script') {
-                const src = node.src || ''
-                const code = node.innerHTML || ''
-                if (src && src.indexOf('bundle.js') !== -1) return true
-                // block inline scripts that reference `.translations` or the exact phrase
-                if (code && (code.indexOf(".translations") !== -1 || code.indexOf("reading 'translations'") !== -1)) return true
-              }
-            } catch (e) { /* ignore */ }
-            return false
-          }
-
-          const wrapInsert = function (orig) {
-            return function (node, ...args) {
-              try {
-                if (shouldBlock(node)) {
-                  console.warn('[dev] Blocked injected script referencing translations or bundle.js', node.src || '(inline)')
-                  // replace with an inert script so layout expectations don't change
-                  const inert = document.createElement('script')
-                  inert.type = 'application/javascript'
-                  inert.innerHTML = "// blocked by dev interceptor"
-                  return orig.call(this, inert, ...args)
-                }
-              } catch (e) { /* ignore */ }
-              return orig.call(this, node, ...args)
-            }
-          }
-
-          Element.prototype.appendChild = wrapInsert(Element.prototype.appendChild)
-          Element.prototype.insertBefore = wrapInsert(Element.prototype.insertBefore)
-          Node.prototype.replaceChild = function (newChild, oldChild) {
-            try {
-              if (shouldBlock(newChild)) {
-                console.warn('[dev] Replaced blocked script with inert script', newChild.src || '(inline)')
-                const inert = document.createElement('script')
-                inert.type = 'application/javascript'
-                inert.innerHTML = "// blocked by dev interceptor"
-                return Node.prototype.replaceChild.call(this, inert, oldChild)
-              }
-            } catch (e) { /* ignore */ }
-            return Node.prototype.replaceChild.call(this, newChild, oldChild)
-          }
-        } catch (e) { /* ignore */ }
+          const isLocal = (location && (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname === '' || location.protocol === 'file:' || (location.hostname && location.hostname.startsWith('192.168.'))))
+          if (!isLocal) return
+        } catch (e) { return }
+        try { console.info('[dev] DOM interception disabled; using lighter dev shims') } catch (e) {}
       })();
+    </script>
     </script>
     <script>
       // Early shim: robusto para evitar errores si alguna dependencia asume objetos de internacionalización

@@ -73,7 +73,7 @@ jobs:
         run: npm --prefix backend run test:env
 
       - name: Run backend tests
-        run: npm --prefix backend test
+        run: npm --prefix backend run test:local
 
       - name: Stop dummy server
         if: always()

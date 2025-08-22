@@ -3,8 +3,8 @@
 
 Esta versión del checklist refleja el estado actual del repositorio en la fecha indicada. Marqué los ítems que ya están implementados o con scaffold presente.
 
-## 1. 🎯 Visión del Proyecto
-- [ ] Definir arquitectura del sistema integral
+- ## 1. 🎯 Visión del Proyecto
+- [x] Definir arquitectura del sistema integral
 - [ ] Establecer prioridades de desarrollo (iOS > Android > Web)
 - [ ] Crear documentación técnica base
 - [ ] Validar viabilidad técnica y recursos

@@ -48,3 +48,19 @@ Siguientes pasos rápidos:
 3. Ejecutar `node index.js` en `backend` (o `npm run dev`).
 
 Ver `frontend-admin/README.md` y `mobile/README.md` para instrucciones específicas de cada parte.
+
+## Arquitectura del sistema
+
+Resumen (ver `docs/ARCHITECTURE.md` para detalles completos):
+
+- App móvil (Flutter): interfaz principal para usuarios (iOS/Android).
+- Backend (Node.js + Express): API RESTful que expone `/api/rios`, `/api/comentarios`, `/api/multimedia`.
+- Frontend admin (React + Vite): panel administrativo y vistas de gestión.
+- Almacenamiento: SQLite para desarrollo; PostgreSQL planificado para producción.
+- Archivos multimedia: Firebase Storage o S3 en producción; `backend/uploads/` en desarrollo.
+
+Próximos pasos recomendados:
+
+- Preparar migración a PostgreSQL.
+- Documentar contratos de API (OpenAPI/Swagger).
+- Definir pipeline de despliegue para staging y producción.

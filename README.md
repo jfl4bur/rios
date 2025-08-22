@@ -31,6 +31,17 @@ Backend:
 - Inicia con `npm run dev`.
 Nota: el backend ahora usa el puerto por defecto `9000` configurado en `config/config.json`.
 
+API del backend (básico)
+-----------------------
+
+El backend expone un endpoint principal para listar rutas:
+
+- GET `/api/rios` — devuelve una lista paginada de rutas.
+	- Parámetros: `page` (default 1), `limit` (default 20, max 100).
+	- Respuesta: JSON con `{ items, total, page, limit }`. Cada item contiene el campo `geometry` con GeoJSON parseado.
+
+Consulta la documentación completa en `backend/README.md`.
+
 Siguientes pasos rápidos:
 1. Abrir una terminal en `backend` y ejecutar `npm install`.
 2. Revisar `config/config.json` y añadir credenciales de Firebase y keys de Maps.

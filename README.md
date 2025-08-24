@@ -68,6 +68,14 @@ Para regenerar el índice de documentación desde los archivos actuales, use:
 pwsh.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\update_docs_index.ps1
 ```
 
+O bien ejecutar el script todo-en-uno que hace backup, regenera y pushea si hay cambios:
+
+```
+pwsh.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\ci_regen_and_push.ps1
+```
+
+Última sincronización automática: `docs/LAST_SYNC.md`
+
 Los logs y artefactos de ejecución se han movido a la carpeta `logs/` para mantener la raíz limpia.
 
 ## Arquitectura del sistema

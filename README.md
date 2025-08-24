@@ -1,3 +1,6 @@
+Los logs y artefactos de ejecución se han movido a la carpeta `logs/` para mantener la raíz limpia.
+
+Última sincronización automática: `docs/LAST_SYNC.md`
 Proyecto Rios — monorepo
 
 Estructura inicial y scripts de Sprint 0.
@@ -54,27 +57,31 @@ Ver `frontend-admin/README.md` y `mobile/README.md` para instrucciones específi
 Documentación y checklist
 -------------------------
 
-El índice principal de documentación está en `docs/INDEX.md` (generado).
+Acceso rápido a la documentación del proyecto (archivos dentro de `docs/`):
 
-- Arquitectura: `docs/ARCHITECTURE.md`
-- Plan migración: `docs/MIGRATE_TO_POSTGRES.md`
-- Roadmap: `docs/ROADMAP.md`
+- Índice (punto de entrada): [docs/INDEX.md](./docs/INDEX.md)
+- Arquitectura: [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
+- Plan migración a Postgres: [docs/MIGRATE_TO_POSTGRES.md](./docs/MIGRATE_TO_POSTGRES.md)
+- Roadmap: [docs/ROADMAP.md](./docs/ROADMAP.md)
+- Estado resumen: [docs/STATUS.md](./docs/STATUS.md)
 
-El checklist maestro del proyecto se conserva en la raíz histórica: `logs/checklist.md` (no eliminar ni reducir entradas; sólo añadir nuevos ítems si procede).
+Checklist maestro (no eliminar entradas; sólo añadir si procede): [logs/checklist.md](./logs/checklist.md)
 
-Para regenerar el índice de documentación desde los archivos actuales, use:
+Cómo ver la documentación:
+- En GitHub: visita the repo and open the `docs/` folder or click the links above.
+- Localmente: abre `docs/INDEX.md` en tu editor (VS Code) o genera el índice con el script:
 
-```
-pwsh.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\update_docs_index.ps1
-```
-
-O bien ejecutar el script todo-en-uno que hace backup, regenera y pushea si hay cambios:
-
-```
-pwsh.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\ci_regen_and_push.ps1
+```powershell
+pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\update_docs_index.ps1
 ```
 
-Última sincronización automática: `docs/LAST_SYNC.md`
+Script todo-en-uno (backup, regen, commit, push):
+
+```powershell
+pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\ci_regen_and_push.ps1
+```
+
+Última sincronización automática (archivo): [docs/LAST_SYNC.md](./docs/LAST_SYNC.md)
 
 Los logs y artefactos de ejecución se han movido a la carpeta `logs/` para mantener la raíz limpia.
 

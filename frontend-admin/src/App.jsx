@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import CreateRuta from './CreateRuta'
+import RutasList from './RutasList'
 
 export default function App() {
   const [rios, setRios] = useState([])
   const [showForm, setShowForm] = useState(false)
+  const [viewMode, setViewMode] = useState('both') // 'list' | 'map' | 'both'
 
   const fetchRios = () => {
     const base = import.meta.env.VITE_API_BASE || 'http://localhost:9000';
-    axios.get(`${base}/api/rios`).then(r => setRios(r.data)).catch((err) => { console.error('fetch /api/rios failed', err); setRios([]) })
+    axios.get(`${base}/api/rios`).then(r => {
+      const data = r && r.data
+      if (Array.isArray(data)) setRios(data)
+      else if (data && Array.isArray(data.items)) setRios(data.items)
+      else setRios([])
+    }).catch((err) => { console.error('fetch /api/rios failed', err); setRios([]) })
   }
 
   useEffect(() => {
@@ -31,15 +38,17 @@ export default function App() {
         </div>
       )}
 
-      <ul>
-        {rios.map(r => (
-          <li key={r.id} className="mb-2 border p-2 rounded">
-            <strong className="block text-lg">{r.nombre}</strong>
-            <p className="text-sm text-gray-700">{r.descripcion}</p>
-            <div className="text-xs text-gray-500 mt-1">Categoria: {r.categoria || '—'} — Duración: {r.duracion_estimada || '—'}</div>
-          </li>
-        ))}
-      </ul>
+      <div className="mb-4">
+        <div className="mb-2 flex items-center gap-2">
+          <label className="text-sm">Ver:</label>
+          <select value={viewMode} onChange={e => setViewMode(e.target.value)} className="border px-2 py-1 rounded">
+            <option value="both">Mapa + Lista</option>
+            <option value="map">Mapa</option>
+            <option value="list">Lista</option>
+          </select>
+        </div>
+        <RutasList items={rios} mode={viewMode} />
+      </div>
     </div>
   )
 }

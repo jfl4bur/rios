@@ -9,5 +9,10 @@ npm install
 npm run dev
 ```
 
-- The app reads `VITE_API_BASE` from `.env` (defaults to http://localhost:9000). Adjust if backend runs on another host/port.
-- The app makes a request to `/api/rios` and lists entries.
+Development notes:
+
+- The dev `index.html` now includes lightweight instrumentation that logs a
+	stack trace when `window.merchant` is assigned. This helps identify browser
+	extensions or injected scripts that create the global and cause runtime
+	errors. The instrumentation does not mask errors and is safe for local
+	debugging; remove it before production if desired.

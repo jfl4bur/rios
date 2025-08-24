@@ -30,10 +30,12 @@ function seed() {
     // Comentarios demo
     const comentarios = [
       { id: 'c1', rio_id: 'r1', usuario_id: 'u1', texto: 'Increíble ruta, vistas espectaculares.' },
-      { id: 'c2', rio_id: 'r2', usuario_id: 'u2', texto: 'Preparar equipo adecuado, mucho viento.' }
+      { id: 'c2', rio_id: 'r2', usuario_id: 'u2', texto: 'Preparar equipo adecuado, mucho viento.' },
+      // reply to c1
+      { id: 'c1-1', rio_id: 'r1', usuario_id: 'u2', texto: 'Totalmente de acuerdo, mejor al amanecer.', parent_id: 'c1' }
     ];
-    const stmtC = db.prepare('INSERT OR REPLACE INTO comentarios (id, rio_id, usuario_id, texto) VALUES (?,?,?,?)');
-    comentarios.forEach(c => stmtC.run(c.id, c.rio_id, c.usuario_id, c.texto));
+    const stmtC = db.prepare('INSERT OR REPLACE INTO comentarios (id, rio_id, usuario_id, texto, parent_id) VALUES (?,?,?,?,?)');
+    comentarios.forEach(c => stmtC.run(c.id, c.rio_id, c.usuario_id, c.texto, c.parent_id || null));
     stmtC.finalize();
 
     console.log('Seed demo completado');

@@ -11,6 +11,8 @@ const riosRoutes = require('./routes/rios');
 const comentariosRoutes = require('./routes/comentarios');
 const multimediaRoutes = require('./routes/multimedia');
 const usuariosRoutes = require('./routes/usuarios');
+const devReports = require('./routes/dev_reports');
+const devReportsRaw = require('./routes/dev_reports_raw');
 
 const app = express();
 const fs = require('fs');
@@ -88,6 +90,9 @@ app.use('/api/comentarios', comentariosRoutes);
 app.use('/api/multimedia', multimediaRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/auth', authRoutes);
+// dev-only reports endpoint (no DB, JSONL append)
+app.use('/api/dev/reports', devReports);
+app.use('/api/dev/reports', devReportsRaw);
 
 app.get('/', (req, res) => res.json({ ok: true, message: 'Rios backend listo' }));
 

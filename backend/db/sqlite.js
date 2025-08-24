@@ -21,16 +21,19 @@ function initDb() {
       duracion_estimada INTEGER,
       geometry TEXT,
       multimedia TEXT,
-      lat REAL,
-      lng REAL
+  lat REAL,
+  lng REAL,
+  end_lat REAL,
+  end_lng REAL
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS comentarios (
       id TEXT PRIMARY KEY,
-      rio_id TEXT,
-      usuario_id TEXT,
-      texto TEXT,
-      creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
+  rio_id TEXT,
+  usuario_id TEXT,
+  texto TEXT,
+  parent_id TEXT,
+  creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
   });
   db.close();

@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS comentarios (
   rio_id TEXT,
   usuario_id TEXT,
   texto TEXT,
+  parent_id TEXT,
   creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

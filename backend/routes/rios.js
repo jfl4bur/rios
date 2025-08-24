@@ -75,14 +75,23 @@ router.post('/', optional, (req, res) => {
 
   // prefer explicit lat/lng or point/linestring geometry
   let geometry = null, repLat = null, repLng = null;
+  let endLat = null, endLng = null;
   if (req.body.geometry && Array.isArray(req.body.geometry.coordinates)) {
     if (req.body.geometry.type === 'Point') {
       geometry = req.body.geometry;
       repLng = Number(geometry.coordinates[0]);
       repLat = Number(geometry.coordinates[1]);
+      endLng = repLng; endLat = repLat;
     } else if (req.body.geometry.type === 'LineString') {
       // keep linestring geometry as-is
       geometry = req.body.geometry;
+      // set representative end coordinates from first and last points
+      if (Array.isArray(geometry.coordinates) && geometry.coordinates.length) {
+        const first = geometry.coordinates[0]
+        const last = geometry.coordinates[geometry.coordinates.length - 1]
+        if (Array.isArray(first) && first.length >= 2) { repLng = Number(first[0]); repLat = Number(first[1]) }
+        if (Array.isArray(last) && last.length >= 2) { endLng = Number(last[0]); endLat = Number(last[1]) }
+      }
     }
   } else if (isNumberFinite(req.body.lat) && isNumberFinite(req.body.lng)) {
     repLat = Number(req.body.lat);
@@ -93,8 +102,8 @@ router.post('/', optional, (req, res) => {
   const id = uuidv4();
   const db = new sqlite3.Database(dbPath);
   db.run(
-    'INSERT INTO rios (id,nombre,descripcion,categoria,dificultad,duracion_estimada,geometry,lat,lng) VALUES (?,?,?,?,?,?,?,?,?)',
-    [id, nombre, descripcion, categoria, dificultad, duracion_estimada, geometry ? JSON.stringify(geometry) : null, repLat, repLng],
+  'INSERT INTO rios (id,nombre,descripcion,categoria,dificultad,duracion_estimada,geometry,lat,lng,end_lat,end_lng) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+  [id, nombre, descripcion, categoria, dificultad, duracion_estimada, geometry ? JSON.stringify(geometry) : null, repLat, repLng, endLat, endLng],
     function (err) {
       db.close();
       if (err) return res.status(500).json({ error: err.message });
@@ -166,5 +175,114 @@ router.get('/:id', (req, res) => {
     res.json(row);
   });
 });
+
+// DEV: cleanup all rios (protected by x-dev-secret header)
+router.post('/cleanup', (req, res) => {
+  try {
+    const secret = process.env.DEV_CLEANUP_SECRET || 'dev-secret'
+    const provided = req.headers['x-dev-secret'] || req.query && req.query.secret
+    if (String(provided) !== String(secret)) {
+      return res.status(403).json({ error: 'forbidden' })
+    }
+    const db = new sqlite3.Database(dbPath)
+    db.serialize(() => {
+      db.run('DELETE FROM rios', function (err) {
+        if (err) {
+          db.close()
+          return res.status(500).json({ error: err.message })
+        }
+        const deleted = this.changes || 0
+        // reset sqlite sequence for autos increment if present
+        db.run('DELETE FROM sqlite_sequence WHERE name = ?', ['rios'], () => {
+          db.close()
+          return res.json({ deleted })
+        })
+      })
+    })
+  } catch (e) {
+    return res.status(500).json({ error: String(e) })
+  }
+})
+
+// DEV: delete a single rio by id (protected by x-dev-secret header)
+router.delete('/:id', (req, res) => {
+  try {
+    const secret = process.env.DEV_CLEANUP_SECRET || 'dev-secret'
+    const provided = req.headers['x-dev-secret'] || req.query && req.query.secret
+    if (String(provided) !== String(secret)) {
+      return res.status(403).json({ error: 'forbidden' })
+    }
+    const id = req.params.id
+    const db = new sqlite3.Database(dbPath)
+    db.run('DELETE FROM rios WHERE id = ?', [id], function (err) {
+      if (err) {
+        db.close()
+        return res.status(500).json({ error: err.message })
+      }
+      const deleted = this.changes || 0
+      db.close()
+      return res.json({ deleted })
+    })
+  } catch (e) {
+    return res.status(500).json({ error: String(e) })
+  }
+})
+
+// PUT /api/rios/:id -> update editable fields (nombre, descripcion, categoria, duracion_estimada, dificultad, geometry, multimedia, lat/lng, end_lat/end_lng)
+router.put('/:id', (req, res) => {
+  try {
+    const id = req.params.id
+    const nombre = req.body.nombre || null
+    const descripcion = req.body.descripcion || null
+    const categoria = req.body.categoria || null
+    const duracion_estimada = req.body.duracion_estimada !== undefined ? req.body.duracion_estimada : null
+    const dificultad = req.body.dificultad || null
+    // multimedia may be an array/object; store as JSON string when provided
+    const multimedia = req.body.multimedia ? (typeof req.body.multimedia === 'string' ? req.body.multimedia : JSON.stringify(req.body.multimedia)) : null
+
+    // geometry handling: accept object or string; attempt to compute representative lat/lng and end lat/lng for LineString
+    let geometry = null
+    let repLat = null, repLng = null, endLat = null, endLng = null
+    if (req.body.geometry) {
+      if (typeof req.body.geometry === 'string') {
+        try { const parsed = JSON.parse(req.body.geometry); geometry = JSON.stringify(parsed) } catch (e) { geometry = req.body.geometry }
+      } else {
+        geometry = JSON.stringify(req.body.geometry)
+      }
+      try {
+        const g = typeof req.body.geometry === 'string' ? JSON.parse(req.body.geometry) : req.body.geometry
+        if (g && Array.isArray(g.coordinates)) {
+          if (g.type === 'Point') {
+            repLng = Number(g.coordinates[0])
+            repLat = Number(g.coordinates[1])
+          } else if (g.type === 'LineString' && g.coordinates.length) {
+            const first = g.coordinates[0]
+            const last = g.coordinates[g.coordinates.length - 1]
+            if (first && Array.isArray(first)) { repLng = Number(first[0]); repLat = Number(first[1]) }
+            if (last && Array.isArray(last)) { endLng = Number(last[0]); endLat = Number(last[1]) }
+          }
+        }
+      } catch (e) { /* ignore geometry parse errors */ }
+    }
+
+    // allow explicit lat/lng overrides
+    const lat = req.body.lat !== undefined ? req.body.lat : repLat
+    const lng = req.body.lng !== undefined ? req.body.lng : repLng
+    const _end_lat = req.body.end_lat !== undefined ? req.body.end_lat : endLat
+    const _end_lng = req.body.end_lng !== undefined ? req.body.end_lng : endLng
+
+    const db = new sqlite3.Database(dbPath)
+    const sql = `UPDATE rios SET nombre = COALESCE(?, nombre), descripcion = COALESCE(?, descripcion), categoria = COALESCE(?, categoria), duracion_estimada = COALESCE(?, duracion_estimada), dificultad = COALESCE(?, dificultad), geometry = COALESCE(?, geometry), lat = COALESCE(?, lat), lng = COALESCE(?, lng), end_lat = COALESCE(?, end_lat), end_lng = COALESCE(?, end_lng), multimedia = COALESCE(?, multimedia) WHERE id = ?`
+    const params = [nombre, descripcion, categoria, duracion_estimada, dificultad, geometry, lat, lng, _end_lat, _end_lng, multimedia, id]
+    db.run(sql, params, function (err) {
+      db.close()
+      if (err) return res.status(500).json({ error: err.message })
+      if (this.changes === 0) return res.status(404).json({ error: 'not found' })
+      return res.json({ updated: this.changes })
+    })
+  } catch (e) {
+    return res.status(500).json({ error: String(e) })
+  }
+})
 
 module.exports = router;

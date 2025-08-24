@@ -1,0 +1,24 @@
+name: Regenerate docs
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *' # daily at 03:00 UTC
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PowerShell
+        uses: actions/setup-powershell@v2
+      - name: Run update scripts
+        run: |
+          pwsh -NoProfile -c "./scripts/update_docs_index.ps1"
+          pwsh -NoProfile -c "./scripts/generate_checklist_status.ps1"
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/* scripts/* README.md logs/checklist.md || true
+          if [ -n "$(git status --porcelain)" ]; then git commit -m "chore(docs): regenerate docs index and status" || true; git push origin main || true; else echo 'No docs changes'; fi

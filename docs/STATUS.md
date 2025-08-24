@@ -1,8 +1,11 @@
-```markdown
 # Estado del checklist maestro
 
-Fecha: 2025-08-24
+Fecha: 2025-08-24 16:22:17
 
-- Total ítems: (generar con scripts/generate_checklist_status.ps1)
+- Total ítems: 204
+- Completados: 62
+- Pendientes: 142
 
-``` 
+---
+
+Este archivo se genera a partir de `logs/checklist.md`. Para regenerarlo, ejecutar `pwsh .\scripts\generate_checklist_status.ps1`

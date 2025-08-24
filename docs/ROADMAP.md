@@ -1,4 +1,3 @@
-```markdown
 # Roadmap — Proyecto Ríos
 
 Última actualización: 2025-08-24
@@ -17,5 +16,3 @@ Este roadmap toma como fuente el `checklist` maestro (ubicado en `logs/checklist
 
 ## Seguimiento
 Usar `docs/INDEX.md` (generado) como punto único de referencia. El checklist maestro queda en `logs/checklist.md`. No eliminar opciones del checklist maestro; solo añadir nuevas entradas.
-
-``` 

@@ -1,102 +1,221 @@
-Los logs y artefactos de ejecución se han movido a la carpeta `logs/` para mantener la raíz limpia.
+<!-- README generado para navegación fiable: anclas explícitas usadas para evitar problemas de slug -->
 
-Última sincronización automática: `docs/LAST_SYNC.md`
-Proyecto Rios — monorepo
+# 🚀 Proyecto Ríos — Monorepo
 
-Estructura inicial y scripts de Sprint 0.
+> Documentación central y navegable del proyecto.
 
-![CI](https://github.com/your-username/your-repo/actions/workflows/ci.yml/badge.svg)
+[![status](https://img.shields.io/badge/status-active-brightgreen.svg)](#)
 
-Ver `README-ROADMAP.md` para el plan de trabajo y prioridades.
+---
 
-Carpetas:
-- backend
-- web
-- mobile
-- scripts
- - docs (documentación y checklists)
- - logs (archivos de ejecución y depuración)
+<details>
+<summary><strong>📚 Tabla de contenidos (clic para expandir)</strong></summary>
 
-Instrucciones rápidas:
-1. Backend: cd backend && npm install && npm run dev
-2. Scripts de setup: see backend/scripts/setup.ps1 and setup.sh
-# Prompt Maestro — Rutas, Ríos y Senderismo
+- [🚀 Proyecto Ríos — Monorepo](#-proyecto-ríos--monorepo)
+	- [📝 Visión general](#-visión-general)
+	- [📅 Roadmap](#-roadmap)
+	- [🎯 Estado y objetivos](#-estado-y-objetivos)
+	- [📁 Estructura del repositorio](#-estructura-del-repositorio)
+	- [⚙️ Instalación y arranque rápido](#️-instalación-y-arranque-rápido)
+	- [🏗️ Arquitectura técnica](#️-arquitectura-técnica)
+	- [🧩 Backend](#-backend)
+	- [🖥️ Frontend admin](#️-frontend-admin)
+	- [📱 Mobile](#-mobile)
+	- [🗄️ Bases de datos y migraciones](#️-bases-de-datos-y-migraciones)
+	- [🖼️ Multimedia y almacenamiento](#️-multimedia-y-almacenamiento)
+	- [🛠️ Scripts y utilidades](#️-scripts-y-utilidades)
+	- [📋 Checklist maestro y estado](#-checklist-maestro-y-estado)
+	- [🤝 Cómo contribuir](#-cómo-contribuir)
+	- [🔧 Comandos útiles](#-comandos-útiles)
+	- [📞 Contacto y licencia](#-contacto-y-licencia)
 
-Mini-esqueleto multiplataforma creado para iniciar el proyecto "Prompt Maestro Ultra Completo".
+</details>
 
-Estructura creada:
-- backend/ (Node.js + Express + SQLite)
-- frontend-admin/ (React + Tailwind)
-- mobile/ (Flutter starter)
-- config/config.json (mapas, firebase placeholders)
-- setup.ps1, setup.sh (scripts de inicialización)
+---
 
-Backend:
-- Ejecuta `npm install` en `backend` y luego `npm run seed:demo` para cargar datos demo.
-- Inicia con `npm run dev`.
-Nota: el backend ahora usa el puerto por defecto `9000` configurado en `config/config.json`.
+<a id="vision-general"></a>
+## 📝 Visión general
 
-API del backend (básico)
------------------------
+Proyecto multiplataforma para gestión y publicación de rutas (geometría + multimedia). Incluye backend, panel admin y cliente móvil.
 
-El backend expone un endpoint principal para listar rutas:
+---
 
-- GET `/api/rios` — devuelve una lista paginada de rutas.
-	- Parámetros: `page` (default 1), `limit` (default 20, max 100).
-	- Respuesta: JSON con `{ items, total, page, limit }`. Cada item contiene el campo `geometry` con GeoJSON parseado.
+<a id="roadmap"></a>
+## 📅 Roadmap
 
-Consulta la documentación completa en `backend/README.md`.
+Última actualización: 2025-08-24
 
-Siguientes pasos rápidos:
-1. Abrir una terminal en `backend` y ejecutar `npm install`.
-2. Revisar `config/config.json` y añadir credenciales de Firebase y keys de Maps.
-3. Ejecutar `node index.js` en `backend` (o `npm run dev`).
+- MVP (Q3 2025): completar CRUD rutas, subida multimedia, editor de rutas en `frontend-admin`.
+- Backlog: migración a PostgreSQL, i18n, E2E tests.
 
-Ver `frontend-admin/README.md` y `mobile/README.md` para instrucciones específicas de cada parte.
+(El checklist maestro en la raíz determina prioridades concretas).
 
-Documentación y checklist
--------------------------
+---
 
-Acceso rápido a la documentación del proyecto (archivos dentro de `docs/`):
+<a id="estado-y-objetivos"></a>
+## 🎯 Estado y objetivos
 
-- Índice (punto de entrada): [docs/INDEX.md](./docs/INDEX.md)
-- Arquitectura: [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
-- Plan migración a Postgres: [docs/MIGRATE_TO_POSTGRES.md](./docs/MIGRATE_TO_POSTGRES.md)
-- Roadmap: [docs/ROADMAP.md](./docs/ROADMAP.md)
-- Estado resumen: [docs/STATUS.md](./docs/STATUS.md)
+- Estado: desarrollo activo.
+- Objetivo inmediato: estabilidad backend y funcionalidades básicas del admin.
 
-Checklist maestro (no eliminar entradas; sólo añadir si procede): [logs/checklist.md](./logs/checklist.md)
+---
 
-Cómo ver la documentación:
-- En GitHub: visita the repo and open the `docs/` folder or click the links above.
-- Localmente: abre `docs/INDEX.md` en tu editor (VS Code) o genera el índice con el script:
+<a id="estructura-del-repositorio"></a>
+## 📁 Estructura del repositorio
 
-```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\update_docs_index.ps1
+- `backend/` — Node.js + Express (API, migraciones, seeds)
+- `frontend-admin/` — React + Vite (panel admin)
+- `mobile/` — cliente móvil (esqueleto)
+- `logs/` — logs y `checklist.md`
+- `scripts/` — utilidades de mantenimiento
+
+---
+
+<a id="instalacion-y-arranque-rapido"></a>
+## ⚙️ Instalación y arranque rápido
+
+Requisitos: Node.js 18+, npm, pwsh (PowerShell) en Windows.
+
+Backend (dev):
+
+```bash
+cd backend
+npm install
+npm run dev
 ```
 
-Script todo-en-uno (backup, regen, commit, push):
+Frontend (dev):
 
-```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\ci_regen_and_push.ps1
+```bash
+cd frontend-admin
+npm install
+npm run dev
 ```
 
-Última sincronización automática (archivo): [docs/LAST_SYNC.md](./docs/LAST_SYNC.md)
+Variables de entorno mínimas (ejemplo `.env`):
 
-Los logs y artefactos de ejecución se han movido a la carpeta `logs/` para mantener la raíz limpia.
+```env
+PORT=9000
+DATABASE_URL=sqlite:./data.sqlite
+UPLOAD_DIR=./backend/uploads
+JWT_SECRET=your_secret
+```
 
-## Arquitectura del sistema
+---
 
-Resumen (ver `docs/ARCHITECTURE.md` para detalles completos):
+<a id="arquitectura-tecnica"></a>
+## 🏗️ Arquitectura técnica
 
-- App móvil (Flutter): interfaz principal para usuarios (iOS/Android).
-- Backend (Node.js + Express): API RESTful que expone `/api/rios`, `/api/comentarios`, `/api/multimedia`.
-- Frontend admin (React + Vite): panel administrativo y vistas de gestión.
-- Almacenamiento: SQLite para desarrollo; PostgreSQL planificado para producción.
-- Archivos multimedia: Firebase Storage o S3 en producción; `backend/uploads/` en desarrollo.
+- Backend: Node.js + Express, REST API.
+- Frontend admin: React + Vite + Tailwind.
+- Mobile: cliente ligero (Flutter / React Native según histórico).
+- Storage: SQLite en dev; PostgreSQL y S3/Firebase en producción.
 
-Próximos pasos recomendados:
+---
 
-- Preparar migración a PostgreSQL.
-- Documentar contratos de API (OpenAPI/Swagger).
-- Definir pipeline de despliegue para staging y producción.
+<a id="backend"></a>
+## 🧩 Backend
+
+Endpoints principales:
+
+- GET `/api/rios`
+- POST `/api/rios` (creación de ruta + uploads)
+- CRUD `/api/comentarios`
+
+Ejemplo de uso:
+
+```bash
+curl -s "http://localhost:9000/api/rios?page=1&limit=10" | jq .
+```
+
+Estructura de datos mínima (ruta): id, title, description, geometry (GeoJSON), photos[], created_at.
+
+---
+
+<a id="frontend-admin"></a>
+## 🖥️ Frontend admin
+
+Arranque:
+
+```bash
+cd frontend-admin
+npm install
+npm run dev
+```
+
+Comprueba `vite.config.js` para proxy/CORS si el backend corre en distinto puerto.
+
+---
+
+<a id="mobile"></a>
+## 📱 Mobile
+
+Carpeta `mobile/` con el esqueleto del cliente. Revisa `mobile/README.md` (si existe) para instrucciones.
+
+---
+
+<a id="bases-de-datos-y-migraciones"></a>
+## 🗄️ Bases de datos y migraciones
+
+- Dev: SQLite. Prod: PostgreSQL (planificado).
+
+Migraciones (ejemplo genérico):
+
+```bash
+cd backend
+npm run migrate
+npm run seed
+```
+
+---
+
+<a id="multimedia-y-almacenamiento"></a>
+## 🖼️ Multimedia y almacenamiento
+
+- Dev: `backend/uploads/`.
+- Procesado: EXIF, thumbnails, compresión.
+- Recomendado: S3/Firebase + CDN en producción.
+
+---
+
+<a id="scripts-y-utilidades"></a>
+## 🛠️ Scripts y utilidades
+
+- `scripts/update_docs_index.ps1` — genera índice (puedes eliminar si vas a borrar `docs/`).
+- `scripts/generate_checklist_status.ps1` — genera `docs/STATUS.md` (puedes eliminar si no lo necesitas).
+- `scripts/ci_regen_and_push.ps1` — orquesta backup y regeneración (revisar antes de ejecutar).
+
+---
+
+<a id="checklist-maestro-y-estado"></a>
+## 📋 Checklist maestro y estado
+
+Accede al checklist maestro en la raíz: [checklist.md](./checklist.md)
+
+---
+
+<a id="como-contribuir"></a>
+## 🤝 Cómo contribuir
+
+- Abrir issues para bugs/mejoras.
+- PRs pequeñas, con tests y documentación cuando apliquen.
+
+---
+
+<a id="comandos-utiles"></a>
+## 🔧 Comandos útiles
+
+- Backend dev: `cd backend && npm install && npm run dev`
+- Frontend dev: `cd frontend-admin && npm install && npm run dev`
+- Regenerar docs (opcional): `pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\ci_regen_and_push.ps1`
+
+---
+
+<a id="contacto-y-licencia"></a>
+## 📞 Contacto y licencia
+
+Mantén actualizado este README si haces cambios importantes. Añade `LICENSE` si procede.
+
+---
+
+(He colocado anclas explícitas y enlaces del TOC a esas anclas. Abre la previsualización de VS Code o usa `npx http-server . -p 8090` y luego visita `http://localhost:8090/README.md#roadmap` para comprobar.)

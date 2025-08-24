@@ -7,6 +7,10 @@ on:
         description: 'If true, list migrations without applying (default true)'
         required: false
         default: 'true'
+      apply:
+        description: 'If true, actually apply migrations. Requires environment approval (production)'
+        required: false
+        default: 'false'
 
 jobs:
   run-migrations:
@@ -34,3 +38,27 @@ jobs:
           else
             node backend/scripts/run_migrations.js --db backend/data.sqlite
           fi
+
+  apply-migrations:
+    needs: run-migrations
+    if: ${{ github.event.inputs.apply == 'true' }}
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Ensure sqlite3
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y sqlite3
+
+      - name: Install backend deps
+        run: npm --prefix backend ci
+
+      - name: Apply migrations (node)
+        run: node backend/scripts/run_migrations.js --db backend/data.sqlite

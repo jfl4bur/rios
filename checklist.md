@@ -2,6 +2,23 @@
 
 Esta versión del checklist refleja el estado actual del repositorio en la fecha indicada. Marqué los ítems que ya están implementados o con scaffold presente.
 
+## Plan de ejecución (Windows 11 + iPhone sin Mac físico)
+
+> - [ ] 01 - [11.1] 🔥 Preparar entorno Windows: instalar Node.js, npm, Git, Visual Studio Build Tools, Android SDK y herramientas recomendadas para Flutter en Windows.
+> - [ ] 02 - [3.1] 🔥 Instalar Flutter SDK en Windows y verificar con `flutter doctor` (usar emulador Android local para desarrollo y pruebas rápidas).
+> - [ ] 03 - [3.3] 🔥 Verificar y levantar backend local (Node/Express): ejecutar migraciones y seed para tener datos de prueba.
+> - [ ] 04 - [3.4] 🔥 Configurar Firebase (Auth, Storage, FCM) para el proyecto de pruebas y cargar credenciales en `config/` (variables de entorno para CI).
+> - [ ] 05 - [16.2] 🔥 Configurar CI con macOS runners o servicios terceros (GitHub Actions con macos-latest, Codemagic o Bitrise) para compilar y firmar builds iOS sin Mac físico.
+> - [ ] 06 - [3.1] 🔥 Añadir configuración iOS en Flutter (signing, entitlements) y conectar los certificados/profiles al CI seguro para publicar TestFlight.
+> - [ ] 07 - [16.2] 🔥 Ejecutar build iOS en CI y desplegar en TestFlight para pruebas en iPhone reales.
+> - [ ] 08 - [6] 🔥 Implementar y probar features core en local y en TestFlight: creación de rutas, multimedia y visualización mapa/lista.
+> - [ ] 09 - [15.1] 🔥 Ejecutar pruebas móviles (unitarios + integración) en CI y revisar resultados antes de promoción a production.
+> - [ ] 10 - [3.1/3.2] 🔥 Estabilizar Android y Web: ajustar builds, test y publicar APK/Play/App bundles y desplegar frontend.
+---
+>  **ℹ️ - Las prioridades entre paréntesis (01..10) serán usadas para numerar y ordenar los items en el checklist.**
+
+---
+
 - ## 1. 🎯 Visión del Proyecto
 - [x] Definir arquitectura del sistema integral
 - [ ] Establecer prioridades de desarrollo (iOS > Android > Web)
@@ -20,9 +37,9 @@ Esta versión del checklist refleja el estado actual del repositorio en la fecha
 ### 3.1 Entorno Móvil
 - [x] Crear proyecto Flutter base (carpeta `mobile/` con `main.dart`)
 - [x] Configurar estructura de carpetas (esqueleto presente)
-- [ ] Instalar Flutter SDK (por hacer en la máquina de desarrollo)
-- [ ] Configurar desarrollo iOS
-- [ ] Configurar desarrollo Android
+- [ ] (02) [3.1] 🔥 Instalar Flutter SDK (por hacer en la máquina de desarrollo)
+- [ ] (06) [3.1] 🔥 Configurar desarrollo iOS
+- [ ] (10) [3.1/3.2] 🔥 Configurar desarrollo Android
 
 ### 3.2 Entorno Web
 - [x] Configurar React + Vite (`frontend-admin`)
@@ -37,10 +54,10 @@ Esta versión del checklist refleja el estado actual del repositorio en la fecha
 - [x] Configurar middleware básico (Firebase auth middleware present)
 - [~] Preparar migración a PostgreSQL (en progreso — PR #29 merged: added Postgres adapter, docker-compose and test runner)
 
-### 3.4 Servicios Externos
-- [ ] Configurar Firebase Authentication (credentials required)
-- [ ] Configurar Firebase Cloud Messaging
-- [ ] Configurar Firebase Storage
+ ## 3.4 Servicios Externos
+ - [ ] (04) [3.4] 🔥 Configurar Firebase Authentication (credentials required)
+ - [ ] (04) [3.4] 🔥 Configurar Firebase Cloud Messaging
+ - [ ] (04) [3.4] 🔥 Configurar Firebase Storage
 - [x] Integrar Google Maps / Mapbox (config placeholder en `config/config.json`)
 - [x] Crear archivo `config/config.json`
 
@@ -77,18 +94,20 @@ Esta versión del checklist refleja el estado actual del repositorio en la fecha
 
 ## 6. 📸 Sistema Multimedia
 
+
+
 ### 6.1 Subida de Archivos
-- [ ] Interfaz de selección múltiple (frontend)
-- [ ] Captura desde cámara
-- [ ] Selección desde galería
-- [ ] Validación de formatos
+- [ ] (08) [6.1] 🔥 Interfaz de selección múltiple (frontend)
+- [ ] (08) [6.1] 🔥 Captura desde cámara
+- [ ] (08) [6.1] 🔥 Selección desde galería
+- [ ] (08) [6.1] 🔥 Validación de formatos
 
 ### 6.2 Procesamiento
 - [x] Extracción de metadatos EXIF (libs + scripts present)
 - [x] Obtención automática de coordenadas (EXIF + geometry)
 - [x] Compresión automática (sharp usage present)
 - [x] Generación de thumbnails (scripts present)
-- [ ] Optimización para web (further tuning)
+ - [ ] (08) [6.2] 🔥 Optimización para web (further tuning)
 
 ### 6.3 Galería
 - [ ] Vista en grid responsiva
@@ -195,15 +214,20 @@ Esta versión del checklist refleja el estado actual del repositorio en la fecha
 
 ## 11. 🚀 Scripts de Configuración
 
-### 11.1 Setup Windows (setup.ps1)
-- [x] Verificación Node.js (script checks)
-- [ ] Instalación Flutter SDK (manual)
-- [x] Instalación dependencias npm (script runs `npm install`)
-- [ ] Instalación dependencias pub (manual)
-- [x] Creación base SQLite (migrations runner present)
-- [x] Descarga config Firebase demo (prompts/scripts present)
-- [x] Prompts interactivos
-- [x] Lanzamiento automático (local_all_in_one, dev_start scripts present)
+ ### 11.1 Setup Windows (setup.ps1)
+ - [x] Verificación Node.js (script checks)
+ - [ ] Instalación Flutter SDK (manual)
+ - [x] Instalación dependencias npm (script runs `npm install`)
+ - [ ] Instalación dependencias pub (manual)
+ - [x] Creación base SQLite (migrations runner present)
+ - [x] Descarga config Firebase demo (prompts/scripts present)
+ - [x] Prompts interactivos
+ - [x] Lanzamiento automático (local_all_in_one, dev_start scripts present)
+ - [x] [11.1] 🔥 Instalación Git y configuración básica (user.name + user.email)
+ - [x] [11.1] 🔥 Instalación Visual Studio Build Tools (C++ toolchain) y configuración PATH
+ - [x] [11.1] 🔥 Instalación Android SDK / Android Studio (SDK tools + Platform tools) y configuración ANDROID_HOME/ANDROID_SDK_ROOT
+ - [x] [11.1] 🔥 Verificar PATH y variables (node, npm, git, adb)
+ - [ ] (05) [16.2] 🔥 Configurar CI macOS para builds iOS (GitHub Actions / Codemagic / Bitrise)
 
 ### 11.2 Setup Unix (setup.sh)
 - [x] Adaptación para bash

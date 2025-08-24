@@ -23,6 +23,11 @@ jobs:
       - name: Install backend deps
         run: npm --prefix backend ci
 
+      - name: Ensure sqlite3 is available on runner
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y sqlite3
+
       - name: Start dummy HTTP server (Node)
         run: |
           cat > dummy-server.js <<'JS'

@@ -1,4 +1,3 @@
-
 # 📍 Proyecto Multiplataforma de Rutas, Ríos y Senderismo - Checklist
 
 Esta versión del checklist refleja el estado actual del repositorio en la fecha indicada. Marqué los ítems que ya están implementados o con scaffold presente.

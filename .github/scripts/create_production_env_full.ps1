@@ -53,14 +53,21 @@ if (-not $permObj.admin) {
 }
 
 Write-Output "Creating environment '$Env' if missing..."
-$createOut = gh api --method PUT "/repos/$Owner/$Repo/environments/$Env" -f wait_timer=0 2>&1
+# Use empty JSON body to avoid type issues with wait_timer
+$createOut = gh api --method PUT "/repos/$Owner/$Repo/environments/$Env" -f '{}' 2>&1
 if ($LASTEXITCODE -ne 0) {
   Write-Warning "Warning: creating environment returned non-zero. Output: $createOut"
 } else { Write-Output "Environment created/updated." }
 
+# Normalize reviewers input: allow passing a single comma-separated string
+if ($Reviewers.Count -eq 1 -and $Reviewers[0] -match ',') {
+  $Reviewers = ($Reviewers -split ',') | ForEach-Object { $_.Trim() }
+}
+
 # Resolve user IDs
 $ids = @()
 foreach ($u in $Reviewers) {
+  if ([string]::IsNullOrWhiteSpace($u)) { continue }
   Write-Output "Resolving user: $u"
   $idOut = gh api "/users/$u" --jq .id 2>&1
   if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($idOut)) {

@@ -1,23 +1,54 @@
 const { spawn } = require('child_process');
 const net = require('net');
+const http = require('http');
 const path = require('path');
 
 function waitForPort(port, host = '127.0.0.1', timeout = 5000) {
+  // Wait until the TCP port is open and the HTTP endpoint responds.
   return new Promise((resolve, reject) => {
     const start = Date.now();
-    (function check() {
+
+    function checkTcp() {
       const sock = new net.Socket();
+      let settled = false;
+      sock.setTimeout(1000);
       sock.once('error', () => {
         sock.destroy();
-        if (Date.now() - start > timeout) return reject(new Error('timeout'));
-        setTimeout(check, 100);
+        settled = true;
+        retryOrTimeout();
+      });
+      sock.once('timeout', () => {
+        sock.destroy();
+        settled = true;
+        retryOrTimeout();
       });
       sock.once('connect', () => {
         sock.end();
-        resolve();
+        if (!settled) settled = true;
+        // TCP open, now validate HTTP responds
+        checkHttp();
       });
       sock.connect(port, host);
-    })();
+    }
+
+    function checkHttp() {
+      const req = http.request({ method: 'GET', host, port, path: '/', timeout: 2000 }, (res) => {
+        // consider any 2xx or 3xx a good sign the server is ready
+        if (res.statusCode >= 200 && res.statusCode < 400) return resolve();
+        // otherwise retry
+        retryOrTimeout();
+      });
+      req.on('timeout', () => { req.destroy(); retryOrTimeout(); });
+      req.on('error', () => { retryOrTimeout(); });
+      req.end();
+    }
+
+    function retryOrTimeout() {
+      if (Date.now() - start > timeout) return reject(new Error('timeout'));
+      setTimeout(checkTcp, 150);
+    }
+
+    checkTcp();
   });
 }
 

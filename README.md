@@ -54,7 +54,20 @@ Ver `frontend-admin/README.md` y `mobile/README.md` para instrucciones específi
 Documentación y checklist
 -------------------------
 
-El checklist del proyecto se encuentra ahora en `docs/checklist.md`.
+El índice principal de documentación está en `docs/INDEX.md` (generado).
+
+- Arquitectura: `docs/ARCHITECTURE.md`
+- Plan migración: `docs/MIGRATE_TO_POSTGRES.md`
+- Roadmap: `docs/ROADMAP.md`
+
+El checklist maestro del proyecto se conserva en la raíz histórica: `logs/checklist.md` (no eliminar ni reducir entradas; sólo añadir nuevos ítems si procede).
+
+Para regenerar el índice de documentación desde los archivos actuales, use:
+
+```
+pwsh.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\update_docs_index.ps1
+```
+
 Los logs y artefactos de ejecución se han movido a la carpeta `logs/` para mantener la raíz limpia.
 
 ## Arquitectura del sistema

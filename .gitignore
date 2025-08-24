@@ -13,3 +13,9 @@ frontend-admin/node_modules/
 # Backend test artifacts
 backend/uploads/
 backend/logs/
+backend/tmp_*.txt
+tmp_env_check_*
+tmp_path_preview.txt
+backend/tmp_test_output.txt
+backend/tmp_test_output_from_backend_run.txt
+backend/tmp_test_output_root_run.txt

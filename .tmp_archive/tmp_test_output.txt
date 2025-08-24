@@ -1,0 +1,72 @@
+ECHO test: stdout visible
+ECHO test: stderr visible
+node: v24.3.0
+Test básico: OK (si estás viendo esto, Node está instalado en entorno de ejecución).
+Running env loader test (no external network calls are made by this script if no creds)
+Exit code: 0
+Stdout: Imported Machine var CLEANUP_SMTP_HOST to process.env
+Imported Machine var CLEANUP_SMTP_PORT to process.env
+Imported Machine var CLEANUP_SMTP_USER to process.env
+Imported Machine var CLEANUP_SMTP_PASS
+Stderr: 
+Env loader basic smoke test completed (manual verification of messages recommended)
+Backend escuchando en puerto 0
+ECHO done
+Wrote multimedia_test.out
+Backend escuchando en puerto 0
+✔ GET / returns OK JSON from backend (451.4316ms)
+[
+  {
+    "id": "u1",
+    "nombre": "Demo User 1",
+    "email": "demo1@example.com"
+  },
+  {
+    "id": "u2",
+    "nombre": "Demo User 2",
+    "email": "demo2@example.com"
+  }
+]
+Wrote http_check.out
+Backend escuchando en puerto 0
+✔ GET /api/rios/:id returns geometry as parsed JSON (254.4553ms)
+Backend escuchando en puerto 0
+✔ GET /api/rios paginated returns expected items and total (199.708ms)
+Upload response: {
+  "files": [
+    {
+      "filename": "1756067054708-f409d58a-356a-46fe-99e5-4ad4ba37b3a6.png",
+      "path": "/uploads/1756067054708-f409d58a-356a-46fe-99e5-4ad4ba37b3a6.png",
+      "size": 103,
+      "originalMime": "image/png",
+      "detectedMime": "image/png",
+      "detectedExt": ".png",
+      "compressed": true,
+      "thumbnail": "/uploads/thumb-1756067054708-f409d58a-356a-46fe-99e5-4ad4ba37b3a6.jpg",
+      "thumbnailSize": 807
+    }
+  ]
+}
+Backend escuchando en puerto 0
+✔ POST /api/rios accepts multimedia within limits (200.8518ms)
+Backend escuchando en puerto 0
+✔ POST /api/rios rejects too many multimedia items (21.8447ms)
+Backend escuchando en puerto 0
+✔ POST /api/rios accepts Point geometry (58.5538ms)
+Backend escuchando en puerto 0
+✔ POST /api/rios accepts LineString via waypoints (82.6878ms)
+Backend escuchando en puerto 0
+✔ POST /api/rios rejects invalid geometry (31.8056ms)
+Backend escuchando en puerto 0
+✔ POST /api/rios rejects too many waypoints (39.6379ms)
+Backend escuchando en puerto 0
+✔ POST /api/rios rejects missing title and geometry - validation (34.277ms)
+✔ POST /api/rios rejects invalid waypoint object (19.6182ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11796.1124

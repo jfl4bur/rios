@@ -25,6 +25,7 @@
 	- [🖼️ Multimedia y almacenamiento](#️-multimedia-y-almacenamiento)
 	- [🛠️ Scripts y utilidades](#️-scripts-y-utilidades)
 	- [📋 Checklist maestro y estado](#-checklist-maestro-y-estado)
+- [Estado del checklist maestro](#estado-del-checklist-maestro)
 	- [🤝 Cómo contribuir](#-cómo-contribuir)
 	- [🔧 Comandos útiles](#-comandos-útiles)
 	- [📞 Contacto y licencia](#-contacto-y-licencia)
@@ -191,6 +192,14 @@ npm run seed
 ## 📋 Checklist maestro y estado
 
 Accede al checklist maestro en la raíz: [checklist.md](./checklist.md)
+
+# Estado del checklist maestro
+
+Fecha: 2025-08-24 16:24:58
+
+- Total ítems: 204
+- Completados: 62
+- Pendientes: 142
 
 ---
 

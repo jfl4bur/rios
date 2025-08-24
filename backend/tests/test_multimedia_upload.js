@@ -13,7 +13,20 @@ async function run() {
   }
   const form = new FormData();
   form.append('files', fs.createReadStream(filePath));
-  const res = await fetch('http://localhost:9000/api/multimedia/upload', { method: 'POST', body: form });
+  // Try upload with a few retries to avoid transient ECONNRESET in CI
+  let res;
+  const maxAttempts = 3;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      res = await fetch('http://localhost:9000/api/multimedia/upload', { method: 'POST', body: form });
+      if (res && res.ok) break;
+    } catch (err) {
+      console.warn(`Upload attempt ${attempt} failed: ${err.message}`);
+    }
+    // exponential backoff
+    await new Promise(r => setTimeout(r, 100 * Math.pow(2, attempt - 1)));
+  }
+  if (!res) throw new Error('Upload failed after retries');
   const json = await res.json();
   console.log('Upload response:', JSON.stringify(json, null, 2));
 }

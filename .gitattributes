@@ -1,0 +1,5 @@
+* text=auto eol=lf
+.github/** text=auto
+docs/** text
+*.md text
+*.ps1 text eol=crlf

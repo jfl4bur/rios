@@ -1,6 +1,10 @@
 const http = require('http');
 const fs = require('fs');
-const opts = { hostname: '127.0.0.1', port: 9000, path: '/api/usuarios', method: 'GET' };
+// Allow CI or local runs to override the backend URL via TEST_BACKEND env var.
+// Expected format: http://hostname:port
+const backendUrl = process.env.TEST_BACKEND || 'http://127.0.0.1:9000';
+const u = new URL(backendUrl);
+const opts = { hostname: u.hostname, port: u.port || 80, path: '/api/usuarios', method: 'GET' };
 const req = http.request(opts, (res) => {
   let data = '';
   res.on('data', (chunk) => data += chunk);

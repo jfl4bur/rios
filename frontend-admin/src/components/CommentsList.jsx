@@ -101,8 +101,22 @@ export default function CommentsList({ rioId, onPosted }) {
 
   async function handleSaveEdit(text) {
     if (!editTarget) return
-    await fetch(`${API_BASE}/api/comentarios/${editTarget.id}`, { method: 'PUT', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ texto: text }) })
-    await load()
+    if (!editTarget) return
+    setErrorMsg(null)
+    try {
+      const res = await fetch(`${API_BASE}/api/comentarios/${editTarget.id}`, { method: 'PUT', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ texto: text }) })
+      const j = await res.json().catch(() => null)
+      if (!res.ok) throw new Error((j && j.error) ? j.error : `status ${res.status}`)
+      setSuccessMsg('Comentario actualizado')
+      setTimeout(() => setSuccessMsg(null), 2500)
+      await load()
+    } catch (err) {
+      console.error('Error saving comment edit', err)
+      setErrorMsg(String(err))
+    } finally {
+      setEditOpen(false)
+      setEditTarget(null)
+    }
   }
 
   async function handleDeleteConfirm() {

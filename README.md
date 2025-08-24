@@ -11,6 +11,8 @@ Carpetas:
 - web
 - mobile
 - scripts
+ - docs (documentación y checklists)
+ - logs (archivos de ejecución y depuración)
 
 Instrucciones rápidas:
 1. Backend: cd backend && npm install && npm run dev
@@ -48,6 +50,12 @@ Siguientes pasos rápidos:
 3. Ejecutar `node index.js` en `backend` (o `npm run dev`).
 
 Ver `frontend-admin/README.md` y `mobile/README.md` para instrucciones específicas de cada parte.
+
+Documentación y checklist
+-------------------------
+
+El checklist del proyecto se encuentra ahora en `docs/checklist.md`.
+Los logs y artefactos de ejecución se han movido a la carpeta `logs/` para mantener la raíz limpia.
 
 ## Arquitectura del sistema
 

@@ -1,0 +1,36 @@
+name: Manual migrations
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'If true, list migrations without applying (default true)'
+        required: false
+        default: 'true'
+
+jobs:
+  run-migrations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Ensure sqlite3
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y sqlite3
+
+      - name: Install backend deps
+        run: npm --prefix backend ci
+
+      - name: Run migrations (node)
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            node backend/scripts/run_migrations.js --db backend/data.sqlite --dry-run
+          else
+            node backend/scripts/run_migrations.js --db backend/data.sqlite
+          fi

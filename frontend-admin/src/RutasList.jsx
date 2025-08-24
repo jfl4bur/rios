@@ -23,11 +23,24 @@ export default function RutasList({ items, mode = 'both' }) {
       const list = Array.isArray(items) ? items : (items && Array.isArray(items.items) ? items.items : [])
 
       let map
+      // if we have an existing map instance, ensure its container is still the current ref
+      if (mapInstanceRef.current) {
+        try {
+          const getContainer = mapInstanceRef.current.getContainer
+          const existingContainer = typeof getContainer === 'function' ? mapInstanceRef.current.getContainer() : null
+          // if the map's container is not the current element, the previous container was removed (e.g. when mode='list')
+          if (!existingContainer || existingContainer !== mapRef.current) {
+            try { mapInstanceRef.current.remove() } catch (e) { /* ignore */ }
+            mapInstanceRef.current = null
+          }
+        } catch (e) { /* ignore */ }
+      }
+
       if (mapInstanceRef.current) {
         // reuse existing map instance: we'll reconcile markers instead of removing all layers
         map = mapInstanceRef.current
       } else {
-        // create map once
+        // create map once (or recreate after it was removed)
         mapRef.current.innerHTML = ''
         map = L.map(mapRef.current).setView([40, -3], 6)
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OSM' }).addTo(map)

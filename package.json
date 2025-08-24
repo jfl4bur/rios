@@ -10,6 +10,7 @@
   "integration:check": "node ./integration_check.js",
     "install:all": "npm --prefix backend install && npm --prefix frontend-admin install"
   },
+  "test:backend": "npm --prefix backend test",
   "devDependencies": {
     "concurrently": "^8.0.0"
   }

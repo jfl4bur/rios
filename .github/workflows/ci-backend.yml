@@ -20,7 +20,23 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies (workspaces-aware)
-        run: npm ci --workspaces
+        run: |
+          echo "Installing workspace dependencies with retries..."
+          retries=3
+          attempt=0
+          success=0
+          while [ $attempt -lt $retries ]; do
+            attempt=$((attempt+1))
+            echo "npm ci --workspaces (attempt $attempt/$retries)"
+            npm ci --workspaces && { success=1; break; } || true
+            sleep_seconds=$((2 ** attempt))
+            echo "npm ci failed, sleeping $sleep_seconds seconds before retry"
+            sleep $sleep_seconds
+          done
+          if [ $success -ne 1 ]; then
+            echo "npm ci failed after $retries attempts — falling back to npm install --workspaces"
+            npm install --workspaces
+          fi
 
       - name: Debug environment
         run: |

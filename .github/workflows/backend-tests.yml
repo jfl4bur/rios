@@ -25,7 +25,23 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install backend dependencies
-        run: npm --prefix backend ci
+        run: |
+          echo "Installing backend dependencies with retries..."
+          retries=3
+          attempt=0
+          success=0
+          while [ $attempt -lt $retries ]; do
+            attempt=$((attempt+1))
+            echo "npm --prefix backend ci (attempt $attempt/$retries)"
+            npm --prefix backend ci && { success=1; break; } || true
+            sleep_seconds=$((2 ** attempt))
+            echo "npm ci failed, sleeping $sleep_seconds seconds before retry"
+            sleep $sleep_seconds
+          done
+          if [ $success -ne 1 ]; then
+            echo "npm ci failed after $retries attempts — falling back to npm --prefix backend install"
+            npm --prefix backend install
+          fi
 
       - name: Run migrations and seed demo data
         run: |

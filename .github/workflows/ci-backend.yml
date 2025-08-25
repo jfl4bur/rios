@@ -30,20 +30,24 @@ jobs:
           ls -la backend || true
           echo "--- debug: backend/package.json ---"
           if [ -f backend/package.json ]; then cat backend/package.json || true; else echo "backend/package.json not found"; fi
-          echo "--- debug: run backend migrations ---"
-          npm --prefix backend run migrate || true
-          echo "--- debug: seed demo data ---"
-          npm --prefix backend run seed:demo || true
+          echo "--- debug: run backend migrations (explicit db path when available) ---"
+          # prefer migrate:node which accepts --db; fall back to migrate
+          npm --prefix backend run migrate:node --silent -- --db backend/data.sqlite || npm --prefix backend run migrate || true
+          echo "--- debug: seed demo data (if present) ---"
+          npm --prefix backend run seed:demo --silent || true
           echo "--- debug: run backend tests (verbose) ---"
-          npm --prefix backend test --loglevel verbose || true
+          # ensure TEST_BACKEND points to the expected host:port for basic checks
+          TEST_BACKEND=http://127.0.0.1:9000 npm --prefix backend test --loglevel verbose || true
 
       - name: Start backend in background (for tests that expect http://localhost:9000)
         run: |
+          # start backend binding to the explicit port so tests can connect to 127.0.0.1:9000
           npm --prefix backend start &
           # give the server a moment to bind to the port
-          sleep 2
+          sleep 5
         env:
           NODE_ENV: test
+          PORT: 9000
 
       - name: Run backend tests
         run: |

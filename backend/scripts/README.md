@@ -13,3 +13,9 @@ pwsh -NoProfile -File backend/scripts/run_migrations.ps1 -DbPath "backend/data.s
 ```
 
 Recomendación: ejecuta primero con `-DryRun` y revisa que las migraciones están en el orden correcto.
+
+Node runner:
+
+```bash
+node backend/scripts/run_migrations.js --db backend/data.sqlite --dry-run
+```

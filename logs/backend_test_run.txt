@@ -1,0 +1,70 @@
+# backend_test_run.txt
+# Generado por el asistente: instrucciones y plantilla de logs para la ejecución
+# NOTA: No puedo ejecutar comandos directamente en tu máquina. Este archivo es un contenedor
+# donde debes pegar la salida real de los comandos o donde se guardarán los logs si los
+# ejecutas localmente.
+
+=== COMANDOS RECOMENDADOS (pégalos en PowerShell en C:\Users\jflabur\Desktop\rios) ===
+
+# 1) Instalar dependencias del backend (preferible)
+npm --prefix backend ci
+# (Si falla: npm --prefix backend install)
+
+# 2) Ejecutar tests del backend (script nativo de Node según package.json)
+npm --prefix backend test
+# Alternativa: ejecutar desde la raíz del repo
+npm test
+# O directamente (Node test runner)
+node --test backend/tests
+
+# 3) Script automático agregado (instala y ejecuta tests, guarda logs en TEMP):
+pwsh -NoProfile -File .\scripts\run_backend_tests.ps1
+# Si lo ejecutas, los logs se escribirán en: %TEMP%\rios_backend_test_logs
+
+
+=== PLANTILLA PARA PEGAR LA SALIDA ===
+(Elimina este texto y pega la salida completa o las últimas líneas de los logs)
+
+--- INICIO: SALIDA DE npm --prefix backend ci ---
+
+
+--- FIN: SALIDA DE npm --prefix backend ci ---
+
+--- INICIO: SALIDA DE npm --prefix backend test (o node --test) ---
+
+
+--- FIN: SALIDA DE npm --prefix backend test ---
+
+--- INICIO: CONTENIDO DE backend-install.log (si existe) ---
+
+
+--- FIN: backend-install.log ---
+
+--- INICIO: CONTENIDO DE backend-test.log (si existe) ---
+
+
+--- FIN: backend-test.log ---
+
+
+=== GUÍA RÁPIDA DE USO ===
+- Ejecuta los comandos indicados en PowerShell.
+- Si ejecutas el script `run_backend_tests.ps1`, luego pega aquí las últimas 200 líneas del archivo
+  backend-test.log que queda en %TEMP%\rios_backend_test_logs.
+- Si prefieres, copia y pega directamente la salida de la terminal en las secciones correspondientes.
+
+Cuando pegues los logs en este archivo (o me pegues aquí la salida), analizaré los errores y aplicaré
+correcciones en el repositorio hasta que los tests pasen.
+
+Timestamp de creación: 2025-08-24
+
+=== TROUBLESHOOTING: EPERM unlink sharp DLL on Windows ===
+Si durante `npm --prefix backend ci` ves un error EPERM sobre un archivo dentro de `backend\\node_modules\\sharp\\build\\Release`, prueba lo siguiente:
+
+1) Asegúrate de que no tengas un proceso usando ese archivo (editores, VSCode, un servidor en ejecución, o un antivirus). Cierra VSCode y servidores.
+2) Intenta reiniciar el Explorador de Windows o reiniciar el equipo.
+3) Intenta eliminar manualmente la carpeta `backend\\node_modules\\sharp\\build\\Release` y volver a ejecutar la instalación:
+   Remove-Item -Path .\\backend\\node_modules\\sharp\\build -Recurse -Force
+   npm --prefix backend install
+4) Si el problema continúa, mueve `sharp` a `optionalDependencies` (ya aplicado en el package.json) y vuelve a ejecutar el script. En ese caso `sharp` no es obligatorio para correr tests locales que no manipulen imágenes.
+
+Si necesitas ayuda, pega aquí la salida completa del error y te doy los comandos exactos para desbloquear el archivo.

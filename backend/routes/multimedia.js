@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const sharp = require('sharp');
+const imageProcessor = require('../lib/imageProcessor');
 const exifParser = require('exif-parser');
 
 const uploadDir = path.join(__dirname, '..', 'uploads');
@@ -86,83 +86,54 @@ router.post('/upload', upload.array('files', 10), async (req, res) => {
       // Si detectamos que es imagen (por detected.mime o por mimetype) hacemos compresión con sharp
       const isImage = (meta.detectedMime && meta.detectedMime.startsWith('image/')) || (f.mimetype && f.mimetype.startsWith('image/'));
       if (isImage) {
-        // Intentar procesar con sharp; envolver en try para capturar errores decode
+        // Use imageProcessor wrapper which falls back if sharp is not available
         try {
-          const image = sharp(buffer);
-          const metadata = await image.metadata();
-          let pipeline = image;
-          if (metadata.width && metadata.width > 1920) pipeline = pipeline.resize(1920);
-
+          const metadata = await imageProcessor.metadata(buffer);
+          // only resize if metadata shows width > 1920
+          const doResize = metadata && metadata.width && metadata.width > 1920;
           const outPath = path.join(uploadDir, 'compressed-' + meta.filename);
-          // elegir formato de salida según metadata.format si existe
-          const fmt = metadata.format || (meta.detectedExt === '.png' ? 'png' : 'jpeg');
-          if (fmt === 'png') {
-            await pipeline.png({ quality: 80 }).toFile(outPath);
-          } else if (fmt === 'webp') {
-            await pipeline.webp({ quality: 80 }).toFile(outPath);
-          } else {
-            await pipeline.jpeg({ quality: 80 }).toFile(outPath);
+          const fmt = metadata && metadata.format ? metadata.format : (meta.detectedExt === '.png' ? 'png' : 'jpeg');
+          const processed = await imageProcessor.processToFile(buffer, outPath, { resize: doResize ? { width: 1920 } : null, format: fmt, quality: 80 });
+          if (processed) {
+            const stats = fs.statSync(outPath);
+            try { fs.unlinkSync(fullPath); } catch (e) {}
+            fs.renameSync(outPath, fullPath);
+            meta.size = stats.size;
+            meta.compressed = true;
           }
-          const stats = fs.statSync(outPath);
-          // reemplazar el archivo por la versión comprimida
-          try { fs.unlinkSync(fullPath); } catch (e) {}
-          fs.renameSync(outPath, fullPath);
-          meta.size = stats.size;
-          meta.compressed = true;
-          // Generar thumbnail (ancho 300px) y guardarlo como JPG para servir rápido
+          // Generate thumbnail if imageProcessor supports it
           try {
             const thumbName = 'thumb-' + meta.filename.replace(/\.[^.]+$/, '.jpg');
             const thumbPath = path.join(uploadDir, thumbName);
-            console.log('[multimedia] Generating thumbnail for', meta.filename, '->', thumbName);
-            await sharp(fullPath).resize({ width: 300 }).jpeg({ quality: 70 }).toFile(thumbPath);
-            const tstats = fs.statSync(thumbPath);
-            meta.thumbnail = `/uploads/${thumbName}`;
-            meta.thumbnailSize = tstats.size;
-            // Si hay bucket de Firebase configurado, subir thumbnail y archivo final
-            try {
-              const bucket = req.app && req.app.locals && req.app.locals.firebaseStorageBucket;
-              if (bucket) {
-                // subir file final
-                await bucket.upload(fullPath, { destination: `uploads/${meta.filename}`, public: true });
-                const file = bucket.file(`uploads/${meta.filename}`);
-                const [metaFile] = await file.getMetadata();
-                meta.firebaseUrl = metaFile.mediaLink || (file.publicUrl && file.publicUrl());
-                // subir thumbnail
-                await bucket.upload(thumbPath, { destination: `uploads/${thumbName}`, public: true });
-                const tfile = bucket.file(`uploads/${thumbName}`);
-                const [tmeta] = await tfile.getMetadata();
-                meta.firebaseThumbnail = tmeta.mediaLink || (tfile.publicUrl && tfile.publicUrl());
-              }
-            } catch (fbErr) {
-              console.warn('Firebase upload failed for', meta.filename, fbErr && fbErr.message ? fbErr.message : fbErr);
-              meta.firebaseError = fbErr && fbErr.message ? fbErr.message : String(fbErr);
+            const thumbRes = await imageProcessor.generateThumbnail(fullPath, thumbPath, 300);
+            if (thumbRes) {
+              const tstats = fs.statSync(thumbPath);
+              meta.thumbnail = `/uploads/${thumbName}`;
+              meta.thumbnailSize = tstats.size;
             }
-            console.log('[multimedia] Thumbnail saved:', thumbName, 'size:', tstats.size);
           } catch (thumbErr) {
-            // no bloquear la respuesta por fallo en thumbnail
             console.warn('[multimedia] Thumbnail generation failed for', meta.filename, thumbErr && thumbErr.message ? thumbErr.message : thumbErr);
             meta.thumbnailError = thumbErr && thumbErr.message ? thumbErr.message : String(thumbErr);
           }
         } catch (imgErr) {
-          console.warn('Sharp decode/processing failed for', meta.filename, imgErr && imgErr.message ? imgErr.message : imgErr);
+          console.warn('Image processing failed for', meta.filename, imgErr && imgErr.message ? imgErr.message : imgErr);
           meta.error = imgErr && imgErr.message ? imgErr.message : String(imgErr);
         }
 
-        // Si tras el procesamiento no se generó thumbnail (por ejemplo compresión no necesaria), intentamos generarlo igual
-    if (!meta.thumbnail) {
+  // If thumbnail not generated, attempt fallback (imageProcessor will return null if not available)
+  if (!meta.thumbnail) {
           try {
-            // usar el archivo final (fullPath) para generar thumbnail
             const thumbName = 'thumb-' + meta.filename.replace(/\.[^.]+$/, '.jpg');
             const thumbPath = path.join(uploadDir, thumbName);
-      console.log('[multimedia] Generating fallback thumbnail for', meta.filename, '->', thumbName);
-      await sharp(fullPath).resize({ width: 300 }).jpeg({ quality: 70 }).toFile(thumbPath);
-      const tstats = fs.statSync(thumbPath);
-      meta.thumbnail = `/uploads/${thumbName}`;
-      meta.thumbnailSize = tstats.size;
-      console.log('[multimedia] Fallback thumbnail saved:', thumbName, 'size:', tstats.size);
+            const thumbRes = await imageProcessor.generateThumbnail(fullPath, thumbPath, 300);
+            if (thumbRes) {
+              const tstats = fs.statSync(thumbPath);
+              meta.thumbnail = `/uploads/${thumbName}`;
+              meta.thumbnailSize = tstats.size;
+            }
           } catch (thumbErr2) {
-      console.warn('[multimedia] Thumbnail fallback failed for', meta.filename, thumbErr2 && thumbErr2.message ? thumbErr2.message : thumbErr2);
-      meta.thumbnailError = thumbErr2 && thumbErr2.message ? thumbErr2.message : String(thumbErr2);
+            console.warn('[multimedia] Thumbnail fallback failed for', meta.filename, thumbErr2 && thumbErr2.message ? thumbErr2.message : thumbErr2);
+            meta.thumbnailError = thumbErr2 && thumbErr2.message ? thumbErr2.message : String(thumbErr2);
           }
         }
       }

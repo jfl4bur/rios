@@ -11,6 +11,7 @@
     "check": "pwsh -NoProfile -File scripts/run_all_checks.ps1",
     "migrate": "node scripts/run_migrations.js",
   "migrate:ps1": "pwsh -NoProfile -File scripts/run_migrations.ps1 -DbPath \"backend/data.sqlite\"",
+  "migrate:node": "node scripts/run_migrations.js --db backend/data.sqlite",
     "seed:demo": "node seeds/demo.js",
     "cleanup:uploads": "node scripts/cleanup_uploads.js",
     "create-test-db": "node scripts/create_test_db.js",
@@ -31,9 +32,12 @@
     "node-fetch": "^2.7.0",
     "nodemailer": "^6.10.1",
     "pg": "^8.10.0",
-    "sharp": "^0.32.1",
+    
     "sqlite3": "^5.1.7",
     "uuid": "^9.0.0"
+  },
+  "optionalDependencies": {
+    "sharp": "^0.32.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

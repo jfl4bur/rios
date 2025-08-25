@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const sharp = require('sharp');
+const imageProcessor = require('../lib/imageProcessor');
 
 const uploadDir = path.join(__dirname, '..', 'uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -36,7 +36,11 @@ function isImageBuffer(buf) {
         console.log('Thumb exists, skipping:', thumbName);
         continue;
       }
-      await sharp(fullPath).resize({ width: 300 }).jpeg({ quality: 70 }).toFile(thumbPath);
+      if (!imageProcessor.isAvailable()) {
+        console.log('Skipping thumbnail generation for', f, '- imageProcessor (sharp) not available');
+        continue;
+      }
+      await imageProcessor.generateThumbnail(fullPath, thumbPath, 300);
       const tstat = fs.statSync(thumbPath);
       console.log('Created thumb for', f, '->', thumbName, 'size', tstat.size);
     } catch (e) {

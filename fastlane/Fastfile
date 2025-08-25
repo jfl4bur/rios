@@ -1,0 +1,27 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Build IPA for release using Flutter"
+  lane :build_ios do
+    sh "flutter pub get"
+    sh "flutter build ipa --release --export-options-plist=ios/ExportOptions.plist"
+    UI.message("IPA should be in build/ios/ipa/")
+  end
+
+  desc "Upload to TestFlight using App Store Connect API key"
+  lane :upload_testflight do
+    # Configure App Store Connect API key via environment variables
+    app_store_connect_api_key(
+      key_id: ENV['APP_STORE_CONNECT_KEY_ID'],
+      issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
+      key_content: ENV['APP_STORE_CONNECT_KEY']
+    )
+
+    ipa = Dir["build/ios/ipa/*.ipa"].first
+    if ipa.nil?
+      UI.user_error!("No IPA found in build/ios/ipa. Run build_ios first.")
+    end
+
+    upload_to_testflight(ipa: ipa)
+  end
+end

@@ -1,0 +1,9 @@
+{
+  "required_reviewers": [
+    { "type": "User", "id": 74684004 },
+    { "type": "User", "id": 6946727 },
+    { "type": "User", "id": 4430740 },
+    { "type": "User", "id": 15253644 }
+  ],
+  "required_approving_review_count": 1
+}

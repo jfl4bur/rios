@@ -53,11 +53,21 @@ if (-not $permObj.admin) {
 }
 
 Write-Output "Creating environment '$Env' if missing..."
-# Use empty JSON body to avoid type issues with wait_timer
-$createOut = gh api --method PUT "/repos/$Owner/$Repo/environments/$Env" -f '{}' 2>&1
+# Use a temporary file with an empty JSON body and pass it with --input to avoid -f parsing issues
+$tmpCreate = [System.IO.Path]::GetTempFileName()
+"{}" | Out-File -FilePath $tmpCreate -Encoding utf8
+$createOut = gh api --method PUT "/repos/$Owner/$Repo/environments/$Env" --input $tmpCreate 2>&1
 if ($LASTEXITCODE -ne 0) {
   Write-Warning "Warning: creating environment returned non-zero. Output: $createOut"
 } else { Write-Output "Environment created/updated." }
+
+# Verify environment exists via GET before attempting to apply protection
+$envCheck = gh api "/repos/$Owner/$Repo/environments/$Env" --jq .name 2>&1
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($envCheck)) {
+  Remove-Item $tmpCreate -ErrorAction SilentlyContinue
+  Fail "Environment '$Env' not found after creation attempt. Create it via GitHub UI or run: gh api --method PUT /repos/$Owner/$Repo/environments/$Env --input <file-with-{}> (and ensure you have repo admin). Raw output from create: $createOut"
+} else { Write-Output "Environment exists: $envCheck" }
+Remove-Item $tmpCreate -ErrorAction SilentlyContinue
 
 # Normalize reviewers input: allow passing a single comma-separated string
 if ($Reviewers.Count -eq 1 -and $Reviewers[0] -match ',') {
@@ -95,7 +105,13 @@ Get-Content $tmp | Write-Output
 Write-Output "Applying protection to environment $Env..."
 $applyOut = gh api --method PUT "/repos/$Owner/$Repo/environments/$Env/protection" --input $tmp 2>&1
 if ($LASTEXITCODE -ne 0) {
-  Write-Error "Failed to apply protection. Output:`n$applyOut"
+  # Save raw response for debugging
+  $respFile = [System.IO.Path]::GetTempFileName()
+  $applyOut | Out-File -FilePath $respFile -Encoding utf8
+  Write-Error "Failed to apply protection. Raw response saved to: $respFile`n--- Begin response ---`n$applyOut`n--- End response ---"
+  Write-Output "If this is a 404, verify your token scopes and repo admin permissions. You can inspect the HTTP response and status code with curl (example below)."
+  Write-Output "Example (PowerShell):"
+  Write-Output "  $env:GITHUB_TOKEN | Out-Null; curl -sS -o response.json -w '%{http_code}' -H \"Authorization: token $($env:GITHUB_TOKEN)\" -H \"Accept: application/vnd.github+json\" -X PUT https://api.github.com/repos/$Owner/$Repo/environments/$Env/protection -d @${tmp}"
   exit 2
 }
 Write-Output "Protection applied successfully. Response:`n$applyOut"

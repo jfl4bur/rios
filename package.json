@@ -5,7 +5,9 @@
   "scripts": {
     "start:backend": "npm --prefix backend run dev",
     "start:frontend": "npm --prefix frontend-admin run dev",
-    "start": "concurrently \"npm: start:backend\" \"npm: start:frontend\"",
+  "start": "concurrently \"npm: start:backend\" \"npm: start:frontend\"",
+  "test": "npm run test:backend",
+  "test:all": "pwsh -NoProfile -File ./scripts/run_backend_tests.ps1",
   "dev:start": "pwsh -NoProfile -File ./dev_start.ps1",
   "integration:check": "node ./integration_check.js",
     "install:all": "npm --prefix backend install && npm --prefix frontend-admin install"

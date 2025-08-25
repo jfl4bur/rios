@@ -1,0 +1,30 @@
+name: Backend native Node tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  backend-tests:
+    name: Run backend native Node tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [24]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install backend dependencies
+        run: npm --prefix backend ci
+
+      - name: Run backend tests (native Node runner)
+        run: npm --prefix backend test

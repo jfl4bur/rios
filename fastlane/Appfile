@@ -1,0 +1,4 @@
+# fastlane Appfile - replace placeholders with real values or use environment vars
+app_identifier("com.example.rios") # TODO: set your bundle identifier
+apple_id("your_apple_id@example.com") # TODO: set your Apple ID
+team_id("YOUR_TEAM_ID") # Optional: set your Apple Developer Team ID

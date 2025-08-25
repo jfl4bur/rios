@@ -1,0 +1,67 @@
+name: CI - iOS Build (skeleton)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-ios:
+    name: Build iOS IPA (macos)
+    runs-on: macos-latest
+
+    env:
+      FLUTTER_CHANNEL: stable
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_CHANNEL }}
+
+      - name: Install project deps
+        run: |
+          flutter pub get
+          if [ -d backend ]; then (cd backend && npm ci || npm install); fi
+
+      - name: Prepare iOS build (examples)
+        run: |
+          # Ensure CocoaPods dependencies (may be required by some plugins)
+          if [ -d ios ]; then
+            cd ios
+            pod install --repo-update || true
+            cd ..
+          fi
+
+      - name: Build iOS (IPA)
+        run: |
+          # This step produces an .ipa under build/ios/ipa/ when signing/config is available
+          flutter build ipa --release || true
+        # NOTE: For a fully automated upload to TestFlight you must configure signing in CI.
+
+      - name: Upload IPA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: build/ios/ipa/*.ipa
+
+  # Optional: configure TestFlight upload.
+  # To enable automatic upload to TestFlight, configure these secrets in your repository:
+  # - APP_STORE_CONNECT_KEY_ID
+  # - APP_STORE_CONNECT_ISSUER_ID
+  # - APP_STORE_CONNECT_KEY  (content of the .p8 key)
+  # Then add a Fastlane lane or modify this workflow to write the key file and run fastlane.
+  # For safety this workflow currently only stores the IPA as an artifact.
+
+      - name: Notes
+        run: |
+          echo "This workflow builds an IPA and uploads it as artifact. To enable TestFlight uploads configure the App Store Connect API key secrets: APP_STORE_CONNECT_KEY_ID, APP_STORE_CONNECT_ISSUER_ID and APP_STORE_CONNECT_KEY (p8 file content). See docs/EXECUTION_PLAN_WINDOWS_IOS.md"

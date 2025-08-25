@@ -1,0 +1,44 @@
+Resumen de limpieza: rama backup/feat-validation-rios
+Fecha: 25-08-2025
+
+Acciones realizadas (resumen):
+- Se intentó ejecutar el script `scripts/cleanup_remote_branch.ps1 -AutoYes` para crear backups
+  (archive branch + tag) y borrar la rama remota. La ejecución inicial devolvió un log parcial
+  (solo muestra un fetch con otra rama eliminada) y se depuró el script.
+- Se realizaron comprobaciones directas contra el remoto y local con los comandos:
+  - git fetch --all --prune
+  - git ls-remote --heads origin backup/feat-validation-rios
+  - git ls-remote --heads origin 'archive/*'
+  - git ls-remote --tags origin | Select-String 'backup-'
+
+Resultados:
+- `git ls-remote --heads origin backup/feat-validation-rios` -> sin salida (la rama remota NO existe).
+- `git ls-remote --heads origin 'archive/*'` -> sin salida (no hay ramas archive/* en remoto).
+- `git ls-remote --tags origin | Select-String 'backup-'` ->
+  77d4db66fcc4f75d77b55911f4fe705b45ac657a	refs/tags/backup-before-history-rewrite
+  (hay al menos un tag remoto de backup: `backup-before-history-rewrite`).
+
+Comprobaciones locales realizadas por el usuario:
+- git branch --list backup/feat-validation-rios -> (no existe)
+- git show-ref --heads backup/feat-validation-rios -> no-ref
+- git log --oneline -n 5 backup/feat-validation-rios -> no-commits-or-no-branch
+
+Interpretación y estado final:
+- La rama `backup/feat-validation-rios` ya fue eliminada (no existe ni local ni en origin).
+- Existe un tag remoto de backup que sirve como punto de recuperación.
+- No fue necesario crear `archive/...` ni empujar tags adicionales porque no había rama local
+  que archivar.
+
+Recomendaciones / siguientes pasos (opcionales):
+1) Limpiar refs remotos locales:
+   git fetch --all --prune
+   git remote prune origin
+
+2) Si quieres eliminar cualquier rastro local (solo si existe):
+   git branch -D backup/feat-validation-rios
+
+3) No borrar tags remotos a menos que estés seguro; `backup-before-history-rewrite` es un punto de
+   recuperación útil.
+
+Archivo generado por el asistente en base a acciones ejecutadas y salidas provistas por el usuario.
+error: switch `b' requires a value

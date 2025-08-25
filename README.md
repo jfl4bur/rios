@@ -25,6 +25,7 @@
 	- [🖼️ Multimedia y almacenamiento](#️-multimedia-y-almacenamiento)
 	- [🛠️ Scripts y utilidades](#️-scripts-y-utilidades)
 	- [📋 Checklist maestro y estado](#-checklist-maestro-y-estado)
+	- [🔐 iOS CI Secrets](#-ios-ci-secrets)
 - [Estado del checklist maestro](#estado-del-checklist-maestro)
 	- [🤝 Cómo contribuir](#-cómo-contribuir)
 	- [🔧 Comandos útiles](#-comandos-útiles)
@@ -83,6 +84,36 @@ Backend (dev):
 cd backend
 npm install
 npm run dev
+```
+
+### Tests nativos (Node.js) y ejecución local
+
+Hemos añadido un runner para ejecutar los tests del backend usando el test runner nativo de Node (node --test) y un script que instala dependencias y almacena logs en Windows.
+
+Desde la raíz del repositorio (Windows / PowerShell):
+
+```powershell
+# instala dependencias del backend (intenta npm ci y cae a npm install si falla)
+npm run test:all
+# o ejecutar directamente el script de PowerShell:
+pwsh -NoProfile -File .\scripts\run_backend_tests.ps1
+```
+
+Salida y logs:
+
+- En Windows, el script escribe un log en la carpeta temporal del usuario. Por ejemplo: `$env:TEMP\rios_backend_test_logs\backend-test.log`.
+- Si la instalación con `npm ci` falla por problemas con módulos nativos (p.ej. EPERM durante unlink de DLLs), el script hace fallback a `npm install` y continúa.
+
+Notas sobre dependencias nativas:
+
+- El paquete `sharp` se ha movido a `optionalDependencies` en `backend/package.json`. El backend contiene un wrapper (`backend/lib/imageProcessor.js`) que detecta si `sharp` está disponible y permite continuar sin él en entornos donde la instalación de binarios nativos falla (Windows sin Build Tools, etc.).
+
+Si quieres ejecutar solo los tests del backend sin PowerShell wrapper, puedes:
+
+```bash
+cd backend
+npm install
+npm test
 ```
 
 Frontend (dev):
@@ -228,3 +259,17 @@ Mantén actualizado este README si haces cambios importantes. Añade `LICENSE` s
 ---
 
 (He colocado anclas explícitas y enlaces del TOC a esas anclas. Abre la previsualización de VS Code o usa `npx http-server . -p 8090` y luego visita `http://localhost:8090/README.md#roadmap` para comprobar.)
+
+## 🧪 Tests y release recientes
+
+- Documentación de tests y troubleshooting: [docs/TESTS.md](./docs/TESTS.md)
+- Release reciente: v1.0.4 — incluye runner de tests nativos para backend y cambios relacionados con dependencias nativas (ver `CHANGELOG.md`).
+
+---
+
+<a id="-ios-ci-secrets"></a>
+## 🔐 iOS CI Secrets
+
+Guía rápida para configurar los secrets necesarios para que el workflow iOS compile y (opcionalmente) suba a TestFlight.
+
+- Ver documento detallado: `docs/CI_IOS_SECRETS_SETUP.md`

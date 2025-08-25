@@ -16,6 +16,48 @@
 
 ---
 
+## v1.0.4 - 2025-08-25
+
+### Changes
+
+- CI / Tests: Añadido runner de tests nativos de Node para el backend usando `node --test` y un script local para Windows (`scripts/run_backend_tests.ps1`) que instala dependencias y ejecuta los tests, guardando logs en la carpeta temporal del usuario.
+- Dependencias nativas: `sharp` movido a `optionalDependencies` en `backend/package.json` y añadido un wrapper seguro en `backend/lib/imageProcessor.js` que permite operar sin `sharp` cuando la instalación falla.
+- Tests: reparado test de subida multimedia para usar puertos efímeros y reconstruir FormData entre intentos (evita reusar streams consumidos).
+
+### Files changed (destacados)
+
+- `scripts/run_backend_tests.ps1` — nuevo: PowerShell runner que instala dependencias (con fallback) y ejecuta `npm --prefix backend test`, guardando logs en `%TEMP%\rios_backend_test_logs`.
+- `backend/lib/imageProcessor.js` — nuevo wrapper que encapsula `sharp` y expone métodos seguros: `isAvailable()`, `metadata()`, `processToFile()`, `generateThumbnail()`.
+- `backend/routes/multimedia.js` — adaptado para usar `imageProcessor` y manejar la ausencia de procesamiento de imágenes.
+- `backend/scripts/generate_thumbs.js` — usa `imageProcessor` y salta generación si no está disponible.
+- `backend/tests/test_multimedia_upload.js` — reenfocado para usar puertos efímeros y recrear `FormData`/streams por intento.
+- `.github/workflows/ci-backend.yml` — workflow añadido/actualizado para ejecutar los tests del backend en CI (job `backend-tests`).
+
+### Notas y reproducción local
+
+- Ejecuta desde la raíz:
+
+```powershell
+npm run test:all
+# o
+pwsh -NoProfile -File .\scripts\run_backend_tests.ps1
+```
+
+- Logs en Windows: `%TEMP%\rios_backend_test_logs\backend-test.log`
+
+### Notes for Windows
+
+- `npm ci` puede fallar en Windows por archivos nativos bloqueados (EPERM). El runner hace fallback a `npm install` automáticamente.
+- Si persisten bloqueos, usa `Get-NetTCPConnection` y `Stop-Process` en PowerShell o `Handle.exe` (Sysinternals) para identificar y liberar recursos.
+
+
+Referencias:
+
+- PR: https://github.com/jfl4bur/rios/pull/35
+- Release: https://github.com/jfl4bur/rios/releases/tag/v1.0.4
+
+---
+
 ## v1.0.0 - 2025-08-18
 
 Cambios principales incluidos en esta versión:

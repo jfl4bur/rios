@@ -11,6 +11,7 @@ jobs:
   backend-tests:
     name: Run backend native Node tests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       matrix:
         node: [24]
@@ -24,7 +25,40 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install backend dependencies
-        run: npm --prefix backend ci
+        run: |
+          echo "Installing backend dependencies with retries..."
+          retries=3
+          attempt=0
+          success=0
+          while [ $attempt -lt $retries ]; do
+            attempt=$((attempt+1))
+            echo "npm --prefix backend ci (attempt $attempt/$retries)"
+            npm --prefix backend ci && { success=1; break; } || true
+            sleep_seconds=$((2 ** attempt))
+            echo "npm ci failed, sleeping $sleep_seconds seconds before retry"
+            sleep $sleep_seconds
+          done
+          if [ $success -ne 1 ]; then
+            echo "npm ci failed after $retries attempts — falling back to npm --prefix backend install"
+            npm --prefix backend install
+          fi
+
+      - name: Run migrations and seed demo data
+        run: |
+          echo "--- run migrate (prefer migrate:node with explicit db path) ---"
+          npm --prefix backend run migrate:node --silent -- --db backend/data.sqlite || npm --prefix backend run migrate || true
+          npm --prefix backend run seed:demo --silent || true
+
+      - name: Start backend in background (for tests that expect http://localhost:9000)
+        run: |
+          # start backend binding to the explicit port so tests can connect to 127.0.0.1:9000
+          npm --prefix backend start &
+          # give the server a moment to bind to the port
+          sleep 5
+        env:
+          NODE_ENV: test
+          PORT: 9000
 
       - name: Run backend tests (native Node runner)
-        run: npm --prefix backend test
+        run: |
+          npm --prefix backend test
